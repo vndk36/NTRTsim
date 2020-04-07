@@ -4,10 +4,13 @@ build_test
 build_test_integration
 conf/*.conf
 src/DoxyDocs
+test
+test_integration
 
 .cproject
 
 .project
+.vscode
 
 .idea
 

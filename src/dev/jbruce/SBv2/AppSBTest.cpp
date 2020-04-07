@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     // passed in.
     if (argv[1] == NULL)
     {
-      throw std::invalid_argument("No arguments passed in to the application. You need to specify which YAML file you wouldd like to build.");
+      throw std::invalid_argument("No arguments passed in to the application. You need to specify which YAML file you would like to build.");
     }
 
     // create the ground and world. Specify ground rotation in radians
