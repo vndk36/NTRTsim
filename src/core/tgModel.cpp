@@ -96,7 +96,7 @@ void tgModel::step(double dt)
     {
       tgModel* const pChild = m_children[i];
       assert(pChild != NULL);
-      pChild->s tep(dt);
+      pChild->step(dt);
     }
   }
 
