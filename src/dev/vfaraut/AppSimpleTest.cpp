@@ -1,9 +1,11 @@
 /**
  * @file AppSimpleTest.cpp
- * @brief Basic Testing of YAML and SB model building. Should be
- * depricated once the offical model is done
+ * @brief Basic Testing of YAML and SB model building with functions. Simple 
+ * controller as well
+ * @author Victor Faraut
  * $Id$
  */
+
 
 // This application
 #include "yamlbuilder/TensegrityModel.h"
@@ -37,7 +39,7 @@ tgSimulation createSimulation(void);
 int main(int argc, char const *argv[])
 {
   
-    TensegrityModel* const myModel = createModel(argv);
+    TensegrityModel* const myModel = createModel(argv[1]);
 
     tgSimulation simulation = createSimulation();
     //createController();
@@ -49,30 +51,30 @@ int main(int argc, char const *argv[])
 
 
 /**
- * Function that creates the model for the simulation based on the default seting or user define path
+ * Function that creates the tensegrity model with default path or user define 
+ * path
+ * @param[in] userModelPath is the model yaml path. Pass "NULL" is default
  * @return the TensegrityModel object
  */
-TensegrityModel* createModel(char const *argv[]){
+TensegrityModel* createModel(char const *userModelPath){
 
-    std::string modelName = "";
-    if (argv[1] == NULL)
+    std::string modelPath = "";
+    if (userModelPath == NULL)
     {
-      std::cout << "No arguments passed in to the application. Default model was used. If you want to use a custom model, you need to specify it"
+      std::cout << "No arguments passed in to the application. Default model "
+      << "was used. If you want to use a custom model, you need to specify it"
 	    << std::endl;
 
-      modelName = "src/dev/jbruce/SBv2/SBv2_yaml_files/SBv2_model_payload.yaml";
+      modelPath = "src/dev/vfaraut/SBv2_yaml_files/SBv2_model_payload.yaml";
 
     }
     else
     {
-      modelName = argv[1];
-      std::invalid_argument(std::string(argv[1]));
+      modelPath = userModelPath;
     }
     
-    return new TensegrityModel(modelName,false);
-    
+    return new TensegrityModel(modelPath,false);
 }
-
 
 /**
  * Function that creates the world, view and returns the linked tgSimulation.
@@ -83,8 +85,8 @@ tgSimulation createSimulation(void){
     const double pitch      = 0.0;
     const double roll       = 0.0;
 
-    //Creats a config for the new ground. Can be un-nececarry as the angle are zero
-    //and the default angles too.
+    //Creats a config for the new ground. Can be un-nececarry as the angle are
+    //zero and the default angles too.
     const tgBoxGround::Config groundConfig(btVector3(yaw, pitch, roll));
     tgBoxGround* ground = new tgBoxGround();
 
