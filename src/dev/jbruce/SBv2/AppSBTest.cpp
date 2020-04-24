@@ -126,7 +126,7 @@ int main(int argc, char** argv)
     // tagsToControl.push_back("m24");
 
     // Call the constructor for the controller
-    StepwiseController* const controller =
+    tgObserver<TensegrityModel>* const controller =
       new StepwiseController(startTime, stepTime, minLength, rate, tagsToControl);
 
     // Attach the controller to the model. Must happen before running the

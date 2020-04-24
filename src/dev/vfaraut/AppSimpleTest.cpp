@@ -105,4 +105,4 @@ tgSimulation createSimulation(void){
     return simulation;
 }
 
-//BasicController* 
+//tgObserver<TensegrityModel>* const controller = 
