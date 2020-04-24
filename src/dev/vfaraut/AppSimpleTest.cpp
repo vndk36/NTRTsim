@@ -27,6 +27,7 @@
 
 TensegrityModel* createModel(char const *argv[]);
 tgSimulation createSimulation(void);
+void createAndAttachedController(TensegrityModel* const myModel);
 
 /**
  * The entry point.
@@ -42,8 +43,12 @@ int main(int argc, char const *argv[])
     TensegrityModel* const myModel = createModel(argv[1]);
 
     tgSimulation simulation = createSimulation();
-    //createController();
+    
+    createAndAttachedController(myModel);
 
+    simulation.addModel(myModel);
+
+    simulation.run;
 
 
     return 0;
@@ -105,4 +110,11 @@ tgSimulation createSimulation(void){
     return simulation;
 }
 
-//tgObserver<TensegrityModel>* const controller = 
+void createAndAttachedController(TensegrityModel* const myModel){
+  tgObserver<TensegrityModel>* const controller = 
+      new SimpleController(startTime, stepTime, minLength, rate, tagsToControl);
+
+   myModel->attach(controller);
+
+  return 0;
+}
