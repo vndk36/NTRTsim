@@ -50,6 +50,24 @@ int main(int argc, char** argv)
 {
     // For this YAML parser app, need to check that an argument path was
     // passed in.
+
+    std::string modelPath = "";
+    if (argv[1] == NULL)
+    {
+      std::cout << "No arguments passed in to the application. Default model "
+      << "was used. If you want to use a custom model, you need to specify it"
+	    << std::endl;
+
+      modelPath = "src/dev/vfaraut/SBv2_yaml_files/SBv2_model_payload.yaml";
+
+    }
+    else
+    {
+      modelPath = argv[1];
+    }
+    
+    TensegrityModel* const myModel = new TensegrityModel(modelPath,false);
+
     if (argv[1] == NULL)
     {
       throw std::invalid_argument("No arguments passed in to the application. You need to specify which YAML file you would like to build.");
@@ -78,7 +96,7 @@ int main(int argc, char** argv)
     // create the models with their controllers and add the models to the simulation
     // This constructor for TensegrityModel takes the 'debugging' flag as the
     // second argument.
-    TensegrityModel* const myModel = new TensegrityModel(argv[1],false);
+    // TensegrityModel* const myModel = new TensegrityModel(argv[1],false);
 
     // Attach a controller to the model, if desired.
     // This is a controller that interacts with a generic TensegrityModel as
