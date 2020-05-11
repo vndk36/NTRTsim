@@ -19,4 +19,5 @@ subdirs(
     #mcdaly
     #bgigous
     #laika
+    vfaraut
 )

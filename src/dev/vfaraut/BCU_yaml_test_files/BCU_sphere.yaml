@@ -1,0 +1,11 @@
+nodes:
+  s0: [0, 5, 0]
+
+builders:
+  s0:
+    class: tgSphereInfo
+    parameters:
+      density: 1
+      radius: 2
+      roll_friction: 0.9
+      restitution: 0.0
