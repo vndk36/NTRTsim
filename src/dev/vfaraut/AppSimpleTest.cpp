@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
     tgBoxGround* ground = new tgBoxGround();
 
     const tgWorld::Config config(9.81);
-    tgWorld world(config, ground); //degeu
+    tgWorld world(config, ground); 
 
     // create the view
     const double timestep_physics = 0.0001; // seconds
@@ -132,10 +132,12 @@ tgSimulation* createSimulation(void){
  */
 void createAndAttachedController(TensegrityModel* const myModel){
 
-  float waterHeight = 50.0;
+  float waterHeight = 20.0;
   std::vector<std::string> tagsToControl;
 
-  tagsToControl.insert("s0");
+  tagsToControl.push_back("s0");
+  tagsToControl.push_back("s1");
+  tagsToControl.push_back("alu_rod");
 
 
   tgObserver<TensegrityModel>* const controller = 

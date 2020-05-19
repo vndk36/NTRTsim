@@ -1,12 +1,16 @@
 nodes:
   s0: [0, 5, 0]
-  s1: [10, 5, 10]
+  s1: [10, 5, 0]
+
+pair_groups:
+  alu_rod:
+    - [s0, s1]
 
 builders:
   s0:
     class: tgSphereInfo
     parameters:
-      density: 1025
+      density: 800
       radius: 0.5
       roll_friction: 0.9
       restitution: 0.0
@@ -17,4 +21,13 @@ builders:
       density: 800
       radius: 0.5
       roll_friction: 0.9
+      restitution: 0.0
+
+  alu_rod:
+    class: tgRodInfo
+    parameters:
+      density: 0.5
+      radius: 0.175
+      friction: 0.99
+      roll_friction: 0.90
       restitution: 0.0

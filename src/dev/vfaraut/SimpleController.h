@@ -106,17 +106,25 @@ private:
   double m_previousTime;
   int m_count;
   float m_waterHeight;
-
+  float currentWaterDepth;
+  btScalar buoyancyForce;
+  
+  /**
+   * Array with the relation between tags and mass of the object. This is used 
+   * to have the buoyancy force that is applied on the object
+   */
+  struct bodyMass{
+    tgBaseRigid* tag;
+    double weight;    
+  };
+  
   /**
    * A list of all the actuators to control. This is populated in onSetup
    * by using m_tagsToControl.
    */
   std::vector<tgBaseRigid*> rigidWithTags;
 
-  /**
-   * Array with the relation between tags and mass of the object. This is used 
-   * to have the buoyancy force that is applied on the object
-   */
+  
 
 };
 
