@@ -121,19 +121,13 @@ void SimpleController::onStep(TensegrityModel& subject, double dt)
       btTransform trans;
       rigidWithTags[i]->getPRigidBody()->getMotionState()->getWorldTransform (trans);
       currentWaterDepth = -(trans.getOrigin().getY()-m_waterHeight);
-      
-      std::cout << "Position " << m_tagsToControl[i]
-                << " : " << trans.getOrigin().getX()
-                << "X, " << trans.getOrigin().getY()
-                << "Y, " << trans.getOrigin().getZ()
-                << "Z" << std::endl;
 
       if(currentWaterDepth > 0.0){
         btVector3 force(btScalar(0.), btScalar(b_force), btScalar(0.)); // force is a btVector3
         btVector3 force_pos1(btScalar(5.), btScalar(0.), btScalar(0.)); // force is a btVector3
         //std::cout << "Controller step Force will be applied to " << m_tagsToControl[i] << std::endl;
         rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
-        rigidWithTags[i]->getPRigidBody()->applyForce(force,force_pos1);  
+        rigidWithTags[i]->getPRigidBody()->applyCentralForce(force);  
       }
       else
       {

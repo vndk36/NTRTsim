@@ -16,13 +16,13 @@
  * governing permissions and limitations under the License.
 */
 
-#ifndef SIMPLE_CONTROLLER_H
-#define SIMPLE_CONTROLLER_H
+#ifndef ROD_BUOYANCY_CTRL_H
+#define ROD_BUOYANCY_CTRL_H
 
 /**
- * @file SingleCableController.h
- * @brief Contains the definition of class SingleCableController. Based on Ultra-Spines HorizontalSpineController
- * @author Jonathan Bruce
+ * @file rodBuoyancyCtrl.h
+ * @brief Contains the definition of class rodBuoyancyCtrl. Based on Ultra-Spines HorizontalSpineController
+ * @author Victor Faraut
  * $Id$
  */
 
@@ -45,9 +45,23 @@ class TensegrityModel;
 class tgBasicActuator;
 
 /**
+  * Array with the relation between tags and mass of the object. This is used 
+  * to have the buoyancy force that is applied on the object
+  */
+struct bodyMass{
+  tgBaseRigid* tag;
+  double weight;    
+};
+
+struct rodEnds{
+  btVector3 pos1;
+  btVector3 pos2;    
+};
+
+/**
  * A controller to apply the length change in the cables of SUPERball V2 model
  */
-class SimpleController : public tgObserver<TensegrityModel>
+class rodBuoyancyCtrl : public tgObserver<TensegrityModel>
 {
 public:
 
@@ -65,12 +79,12 @@ public:
    * cables upon which to act. All the cables which have a tag in this list of tags
    * will be acted upon by this controller.
    */
-  SimpleController(float waterHeight, std::vector<std::string> tagsToControl);
+  rodBuoyancyCtrl(float waterHeight, std::vector<std::string> tagsToControl);
 
   /**
    * Nothing to delete, destructor must be virtual
    */
-  virtual ~SimpleController() { }
+  virtual ~rodBuoyancyCtrl() { }
 
   /**
    * Apply the controller. On setup, adjust the cable
@@ -91,6 +105,7 @@ public:
 protected:
 
 void initializeActuators(TensegrityModel& subject, std::string tag);
+rodEnds findRodEndPoints(tgBaseRigid* rod);
 
 
 private:
@@ -117,15 +132,17 @@ private:
     tgBaseRigid* tag;
     double weight;    
   };
+
   
   /**
    * A list of all the actuators to control. This is populated in onSetup
    * by using m_tagsToControl.
    */
   std::vector<tgBaseRigid*> rigidWithTags;
+  std::vector<rodEnds> rodWithTagsEnds;
 
   
 
 };
 
-#endif // SIMPLE_CONTROLLER_H
+#endif // ROD_BUOYANCY_CTRL_H
