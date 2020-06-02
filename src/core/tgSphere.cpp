@@ -63,6 +63,8 @@ tgSphere::tgSphere(btRigidBody* pRigidBody,
     {
             throw std::invalid_argument("Pointer to btRigidBody is NULL");
     }
+    // Setup for buoyancy control variables
+    //volume = pow(Config.radius,3)*M_PI*(4/3);
 
     // Postcondition
     assert(invariant());

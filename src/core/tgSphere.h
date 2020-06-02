@@ -32,6 +32,7 @@
 #include "LinearMath/btVector3.h"
 // The C++ Standard Library
 #include <vector>
+#include <math.h>
 
 // Forward declarations
 class btRigidBody;
@@ -101,11 +102,18 @@ public:
     virtual void teardown();
     
     virtual void onVisit(const tgModelVisitor& v) const;
+
+    double getVolume(void){return volume;};
+
+    double getMassBCU(void){return massBCU;};
+    void setMassBCU(double setMass){massBCU = setMass;};
     
 private:
 
     /** Integrity predicate. */
     bool invariant() const;
+    double volume;
+    static double massBCU;
 
 };
 

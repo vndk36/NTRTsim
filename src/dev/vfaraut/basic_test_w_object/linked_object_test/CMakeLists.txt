@@ -11,8 +11,7 @@ link_libraries(	core
 				yaml-cpp
 				TensegrityModel)
 
-add_executable(	AppSimpleTest
-				SimpleController.cpp
-				rodBuoyancyCtrl.cpp
-				AppSimpleTest.cpp
+add_executable(	AppLinkedObjectTest
+				LinkedController.cpp
+				AppLinkedObjectTest.cpp
 				)
