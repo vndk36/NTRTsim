@@ -19,7 +19,7 @@
 /**
  * @file LinkedController.cpp
  * @brief Implementation of LinkedController. Based on Ultra-Spines HorizontalSpineController
- * @author Jonathan Bruce
+ * @author Victor Faraut
  * $Id$
  */
 
