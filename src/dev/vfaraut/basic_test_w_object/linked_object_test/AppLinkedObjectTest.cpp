@@ -108,7 +108,7 @@ void createAndAttachedController(TensegrityModel* const myModel){
 
   tagsToControl.push_back("s0");
   tagsToControl.push_back("s1");
-  //tagsToControl.push_back("alu_rod");
+  tagsToControl.push_back("alu_rod");
   tgObserver<TensegrityModel>* const controller = 
     new LinkedController(waterHeight, tagsToControl);
 

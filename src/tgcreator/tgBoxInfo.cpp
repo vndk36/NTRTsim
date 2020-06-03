@@ -93,6 +93,18 @@ tgModel* tgBoxInfo::createModel(tgWorld& world)
     #endif
     
     tgBox* box = new tgBox(getRigidBody(), getTags(), getLength());
+    
+    // volume and mass used for buoyancy computation
+    const double length = getLength();
+    const double width = m_config.width;
+    const double height = m_config.height;
+    const double density = m_config.density;
+    const double volume =  length * (width*2) * (height*2);
+    // change sphere volume and mass for use in the controller
+    box->setVolume(volume);
+    box->setMassBCU(volume*density);
+    box->setMassBCUMin(volume*density);
+    box->setMassBCUMax(volume*density);
 
     return box;
 }

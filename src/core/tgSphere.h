@@ -103,17 +103,17 @@ public:
     
     virtual void onVisit(const tgModelVisitor& v) const;
 
-    double getVolume(void){return volume;};
+    //double getVolume(void){return volume;};
 
-    double getMassBCU(void){return massBCU;};
-    void setMassBCU(double setMass){massBCU = setMass;};
+    //double getMassBCU(void){return massBCU;};
+    //void setMassBCU(double setMass){massBCU = setMass;};
     
 private:
 
     /** Integrity predicate. */
     bool invariant() const;
-    double volume;
-    static double massBCU;
+    //double volume;
+    //static double massBCU;
 
 };
 

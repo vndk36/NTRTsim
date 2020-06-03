@@ -47,6 +47,7 @@ tgSphere::Config::Config(double r, double d,
         if (rollFriction < 0.0)  { throw std::range_error("Negative roll friction");  }
         if (restitution < 0.0)  { throw std::range_error("Negative restitution");  }
         if (restitution > 1.0)  { throw std::range_error("Restitution > 1");  }
+
     // Postcondition
     assert(density >= 0.0);
     assert(radius >= 0.0);
@@ -63,8 +64,6 @@ tgSphere::tgSphere(btRigidBody* pRigidBody,
     {
             throw std::invalid_argument("Pointer to btRigidBody is NULL");
     }
-    // Setup for buoyancy control variables
-    //volume = pow(Config.radius,3)*M_PI*(4/3);
 
     // Postcondition
     assert(invariant());

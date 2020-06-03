@@ -84,6 +84,43 @@ public:
      */
     virtual btVector3 orientation() const;
 
+    virtual double getVolume(void)
+    {
+        return m_volume;
+    }
+    virtual void setVolume(double setVolume)
+    {
+        m_volume = setVolume;
+    }
+
+    virtual double getMassBCU(void)
+    {
+        return m_massBCU;
+    }
+
+    virtual void setMassBCU(double setMass)
+    {
+        m_massBCU = setMass;
+    }
+    virtual double getMassBCUMin(void)
+    {
+        return m_massBCUMin;
+    }
+
+    virtual void setMassBCUMin(double setMass)
+    {
+        m_massBCUMin = setMass;
+    }
+    virtual double getMassBCUMax(void)
+    {
+        return m_massBCUMax;
+    }
+
+    virtual void setMassBCUMax(double setMass)
+    {
+        m_massBCUMax = setMass;
+    }
+
 protected:
 	// Virtual base class
 	tgBaseRigid(btRigidBody* pRigidBody,
@@ -93,6 +130,7 @@ private:
 
     /** Integrity predicate. */
     bool invariant() const;
+
 
 protected:
     
@@ -111,7 +149,11 @@ protected:
     
     /** The rod's mass. The units are application dependent. */
     const double m_mass;
-    
+
+    double m_volume;
+    double m_massBCU;
+    double m_massBCUMin;
+    double m_massBCUMax;
 };
 
 #endif

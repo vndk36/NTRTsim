@@ -102,16 +102,14 @@ void LinkedController::onSetup(TensegrityModel& subject)
 void LinkedController::onStep(TensegrityModel& subject, double dt)
 {
   // Here we take into consideration that only 0.5 radius shere are used
-  const float sphere_volume = 0.5236;
   const float water_density = 1025;
-  const float b_force       = sphere_volume * water_density * 9.81;
   // First, increment the accumulator variable.
   m_timePassed += dt;
   // Then, if it's passed the time to start the controller,
   // For each cable, check if its rest length is past the minimum,
   // otherwise adjust its length according to m_rate and dt.
 
-  btVector3 force1;
+  static double b_force;
   for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
       
       // Get current position of the object to compute the force
@@ -123,9 +121,10 @@ void LinkedController::onStep(TensegrityModel& subject, double dt)
       currentWaterDepth = -(trans.getOrigin().getY()-m_waterHeight);
 
       if(currentWaterDepth > 0.0){
+        b_force = (rigidWithTags[i]->getVolume())*water_density;
         btVector3 force(btScalar(0.), btScalar(b_force), btScalar(0.)); // force is a btVector3
-        btVector3 force_pos1(btScalar(5.), btScalar(0.), btScalar(0.)); // force is a btVector3
-        std::cout << "Controller step Force will be applied to " << m_tagsToControl[i] << std::endl;
+        std::cout << "Controller step Force will be applied to " <<
+          b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
         rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
         rigidWithTags[i]->getPRigidBody()->applyCentralForce(force);  
       }
