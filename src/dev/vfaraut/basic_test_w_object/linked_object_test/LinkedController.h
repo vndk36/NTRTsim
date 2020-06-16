@@ -30,6 +30,7 @@
 #include "core/tgObserver.h"
 #include "core/tgTags.h"
 #include "core/tgBaseRigid.h" 
+#include "core/tgRod.h"
 
 //Bullet library
 #include "LinearMath/btVector3.h"
@@ -39,6 +40,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
 
 // Forward declarations
 class TensegrityModel;
@@ -106,7 +108,8 @@ private:
   double m_previousTime;
   int m_count;
   float m_waterHeight;
-  float currentWaterDepth;
+  float currentWaterDepthPos1;
+  float currentWaterDepthPos2;
   btScalar buoyancyForce;
 
   
@@ -114,7 +117,11 @@ private:
    * A list of all the actuators to control. This is populated in onSetup
    * by using m_tagsToControl.
    */
-  std::vector<tgBaseRigid*> rigidWithTags;
+  std::vector<tgRod*> rigidWithTags;
+
+
+  // file pointer 
+  std::ofstream m_fout; 
 
   
 

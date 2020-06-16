@@ -106,8 +106,12 @@ void createAndAttachedController(TensegrityModel* const myModel){
   float waterHeight = 10.0;
   std::vector<std::string> tagsToControl;
 
-  tagsToControl.push_back("s0");
-  tagsToControl.push_back("s1");
+  //tagsToControl.push_back("s0");
+  //tagsToControl.push_back("s1");
+  // tagsToControl.push_back("alu_rod_up1");
+  // tagsToControl.push_back("alu_rod_up2");
+  // tagsToControl.push_back("alu_rod_down1");
+  // tagsToControl.push_back("alu_rod_down2");
   tagsToControl.push_back("alu_rod");
   tgObserver<TensegrityModel>* const controller = 
     new LinkedController(waterHeight, tagsToControl);

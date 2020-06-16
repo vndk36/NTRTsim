@@ -11,7 +11,6 @@
 #include "yamlbuilder/TensegrityModel.h"
 //include controller
 #include "SimpleController.h"
-#include "rodBuoyancyCtrl.h"
 // This library
 #include "core/terrain/tgBoxGround.h"
 #include "core/tgModel.h"
@@ -25,13 +24,10 @@
 #include <string>
 #include <vector>
 
-//Define the controller and default model
-#define MODEL 1
 
 // Forward declarations
 TensegrityModel* createModel(char const *userModelPath);
-void createAndAttachedSimpleController(TensegrityModel* const myModel);
-void createAndAttachedRodBuoyancyCTRL(TensegrityModel* const myModel);
+void createAndAttachedController(TensegrityModel* const myModel);
 
 /**
  * Main function that creates model, simulation, and runs it 
@@ -63,14 +59,9 @@ int main(int argc, char const *argv[])
     // create the simulation
     tgSimulation* simulation = new tgSimulation(view);
 
-    switch (MODEL){
-      case 0:
-        createAndAttachedSimpleController(myModel);
-        break;
-      case 1:
-        createAndAttachedRodBuoyancyCTRL(myModel);
-        break;
-    }
+
+    createAndAttachedController(myModel);
+    
 
     simulation->addModel(myModel);
 
@@ -97,14 +88,9 @@ TensegrityModel* createModel(char const *userModelPath){
       << "was used. If you want to use a custom model, you need to specify it"
 	    << std::endl;
 
-      switch (MODEL){
-        case 0:
-          modelPath = "src/dev/vfaraut/SimpleAppTest/BCU_yaml_test_files/BCU_sphere.yaml";
-          break;
-        case 1:
-          modelPath = "src/dev/vfaraut/SimpleAppTest/BCU_yaml_test_files/BCU_sphere_rod.yaml";
-          break;
-      }
+
+      modelPath = "src/dev/vfaraut/SimpleAppTest/BCU_yaml_test_files/BCU_sphere.yaml";
+        
     }
     else
     {
@@ -148,7 +134,7 @@ tgSimulation* createSimulation(void){
  * Function that creates the controller and attached it to the given model
  * @param[in] Model that you want your controller to be attached
  */
-void createAndAttachedSimpleController(TensegrityModel* const myModel){
+void createAndAttachedController(TensegrityModel* const myModel){
 
   float waterHeight = 10.0;
   std::vector<std::string> tagsToControl;
@@ -161,29 +147,6 @@ void createAndAttachedSimpleController(TensegrityModel* const myModel){
 
   tgObserver<TensegrityModel>* const controller = 
     new SimpleController(waterHeight, tagsToControl);
-
-  myModel->attach(controller);
-
-  return;
-}
-
-/**
- * Function that creates the controller and attached it to the given model
- * @param[in] Model that you want your controller to be attached
- */
-void createAndAttachedRodBuoyancyCTRL(TensegrityModel* const myModel){
-
-  float waterHeight = 10.0;
-  std::vector<std::string> tagsToControl;
-
-  tagsToControl.push_back("alu_rod");
-  tagsToControl.push_back("s1");
-  tagsToControl.push_back("s2");
-  tagsToControl.push_back("s3");
-  tagsToControl.push_back("s4");
-
-  tgObserver<TensegrityModel>* const controller = 
-    new rodBuoyancyCtrl(waterHeight, tagsToControl);
 
   myModel->attach(controller);
 

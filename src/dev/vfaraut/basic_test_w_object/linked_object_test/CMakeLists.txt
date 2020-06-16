@@ -14,4 +14,5 @@ link_libraries(	core
 add_executable(	AppLinkedObjectTest
 				LinkedController.cpp
 				AppLinkedObjectTest.cpp
+				#UDPServer.cpp
 				)

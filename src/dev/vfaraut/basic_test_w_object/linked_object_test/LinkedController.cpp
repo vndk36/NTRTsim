@@ -41,6 +41,9 @@
 #include "helpers/FileHelpers.h"
 #include <stdexcept>
 
+#define DEBUG 0
+#define DEBUGOUTPUT 0
+
 // Constructor assigns variables, does some simple sanity checks.
 // Also, initializes the accumulator variable timePassed so that it can
 // be incremented in onStep.
@@ -51,7 +54,23 @@ LinkedController::LinkedController(float waterHeight,
   m_timePassed(0.0),
 	m_count(0)
 { 
+  // file pointer 
+  if(DEBUG)
+  { 
+    // opens an existing csv file or creates a new file. 
+    m_fout.open("/mnt/c/Users/victo/Desktop/Data.csv", std::ios::out | std::ios::app); 
 
+    // Insert the data to file 
+    // fout << 3 << "\n";
+  }
+
+  /* try {
+        boost::asio::io_service io_service;
+        UDPServer server{io_service};
+        io_service.run();
+    } catch (const std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    } */
 }
 
 /**
@@ -64,7 +83,7 @@ void LinkedController::initializeActuators(TensegrityModel& subject,
   //DEBUGGING
   std::cout << "Finding rigidBodies with the tag: " << tag << std::endl;
   // Pick out the actuators with the specified tag
-  std::vector<tgBaseRigid*> foundRigidBodies = subject.find<tgBaseRigid>(tag);
+  std::vector<tgRod*> foundRigidBodies = subject.find<tgRod>(tag);
   std::cout << "The following rigidBodies were found and will have forces " 
             "applied to them be controlled: "
 	        << std::endl;
@@ -110,28 +129,74 @@ void LinkedController::onStep(TensegrityModel& subject, double dt)
   // otherwise adjust its length according to m_rate and dt.
 
   static double b_force;
+  static tgRod::endPoints endPointPos;
   for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
       
-      // Get current position of the object to compute the force
-      // glm::vec3   tempPosition;
+    // Get current position of the object to compute the force
+    // glm::vec3   tempPosition;
 
-      rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
-      btTransform trans;
-      rigidWithTags[i]->getPRigidBody()->getMotionState()->getWorldTransform (trans);
-      currentWaterDepth = -(trans.getOrigin().getY()-m_waterHeight);
+    rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+    btTransform trans;
+    // rigidWithTags[i]->getPRigidBody()->getMotionState()->getWorldTransform (trans);
+    // currentWaterDepth = -(trans.getOrigin().getY()-m_waterHeight);
 
-      if(currentWaterDepth > 0.0){
-        b_force = (rigidWithTags[i]->getVolume())*water_density;
-        btVector3 force(btScalar(0.), btScalar(b_force), btScalar(0.)); // force is a btVector3
-        std::cout << "Controller step Force will be applied to " <<
-          b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
-        rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
-        rigidWithTags[i]->getPRigidBody()->applyCentralForce(force);  
-      }
-      else
+    endPointPos = rigidWithTags[i]->endPointFinder();
+    currentWaterDepthPos1 = -(endPointPos.absolutePos1.getY()-m_waterHeight);
+    currentWaterDepthPos2 = -(endPointPos.absolutePos2.getY()-m_waterHeight);
+    
+    if(DEBUG)
+    {
+      std::cout << "Pos1 x " << endPointPos.absolutePos1.getX() <<
+                 " y " <<       endPointPos.absolutePos1.getY() <<
+                 " z " <<       endPointPos.absolutePos1.getZ() <<
+                 " Pos2 x " <<  endPointPos.absolutePos2.getX() <<
+                 " y " <<       endPointPos.absolutePos2.getY() <<
+                 " z " <<       endPointPos.absolutePos2.getZ() << std::endl;
+
+      if(DEBUGOUTPUT)
       {
-        rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0.0), btScalar (0.0));
+        m_fout << m_timePassed <<
+              "," << endPointPos.absolutePos1.getX() <<
+              "," << endPointPos.absolutePos1.getY() <<
+              "," << endPointPos.absolutePos1.getZ() <<
+              "," << endPointPos.absolutePos2.getX() <<
+              "," << endPointPos.absolutePos2.getY() <<
+              "," << endPointPos.absolutePos2.getZ() << "\n";
       }
-  }
-  
+    }
+
+
+    b_force = ((rigidWithTags[i]->getVolume())*water_density*9.81)/2.0;
+    btVector3 force(btScalar(0.), btScalar(b_force), btScalar(0.)); // force is a btVector3
+
+
+    if(currentWaterDepthPos1 > 0.0){
+      if(DEBUG)
+      {
+        //std::cout << "Controller step Force will be applied to " <<
+        //b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
+      }
+      
+      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
+      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos1);  
+    }
+    else
+    {
+      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
+    }
+    if(currentWaterDepthPos2 > 0.0){
+      if(DEBUG)
+      {
+        //std::cout << "Controller step Force will be applied to " <<
+        //b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
+      }
+      
+      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
+      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos2);  
+    }
+    else
+    {
+      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
+    }
+  } 
 }

@@ -101,6 +101,20 @@ public:
      */
     double length() const { return m_length; }
 
+    /**
+     * 
+     * 
+     */
+    struct endPoints
+    {
+        btVector3 relativePos1;
+        btVector3 relativePos2;
+        btVector3 absolutePos1;
+        btVector3 absolutePos2;
+    };
+
+    endPoints endPointFinder (void);
+
 private:
 
     /** Integrity predicate. */

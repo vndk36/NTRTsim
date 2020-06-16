@@ -34,6 +34,9 @@
 #include <stdexcept>
 #include <sstream> //for the tgSenseable methods.
 #include <iostream> //for strings.
+#include <fstream>
+
+#define DEBUG 0
 
 tgRod::Config::Config(double r, double d,
                         double f, double rf, double res) :
@@ -96,4 +99,36 @@ bool tgRod::invariant() const
     (m_pRigidBody != NULL) &&
     (m_mass >= 0.0) &&
     (m_length >= 0.0);
+}
+
+tgRod::endPoints tgRod::endPointFinder (void)
+{
+  static endPoints endPointPos;
+  btScalar x = centerOfMass().x(); //output in meters
+  btScalar y = centerOfMass().y();
+  btScalar z = centerOfMass().z();
+  btVector3 com = btVector3(x, y, z);
+  btMatrix3x3 rot = btMatrix3x3(m_pRigidBody->getOrientation());
+  
+  
+  if(DEBUG)
+  {
+    btVector3 rot2 = rot.getRow(0);
+    std::cout << rot2.getX() << " " << rot2.getY() << " " << rot2.getZ() << std::endl;
+    rot2 = rot.getRow(1);
+    std::cout << rot2.getX() << " " << rot2.getY() << " " << rot2.getZ() << std::endl;
+    rot2 = rot.getRow(2);
+    std::cout << rot2.getX() << " " << rot2.getY() << " " << rot2.getZ() << std::endl;
+  }
+
+  x = (m_length/2.0);
+  y = 0.0;
+  z = 0.0;
+  btVector3 orig1 = btVector3(x, y, z);
+  btVector3 orig2 = btVector3(-x, y, z);
+  endPointPos.relativePos1 = (rot * orig1);
+  endPointPos.relativePos2 = (rot * orig2);
+  endPointPos.absolutePos1 = endPointPos.relativePos1 + com; 
+  endPointPos.absolutePos2 = endPointPos.relativePos2 + com;
+  return endPointPos;
 }

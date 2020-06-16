@@ -13,6 +13,5 @@ link_libraries(	core
 
 add_executable(	AppSimpleTest
 				SimpleController.cpp
-				rodBuoyancyCtrl.cpp
 				AppSimpleTest.cpp
 				)
