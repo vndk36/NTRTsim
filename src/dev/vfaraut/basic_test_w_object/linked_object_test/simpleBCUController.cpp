@@ -17,14 +17,14 @@
  */
 
 /**
- * @file LinkedController.cpp
+ * @file simpleBCUController.cpp
  * @brief Implementation of LinkedController. Based on Ultra-Spines HorizontalSpineController
  * @author Victor Faraut
  * $Id$
  */
 
 // This module
-#include "LinkedController.h"
+#include "simpleBCUController.h"
 // This application
 #include "yamlbuilder/TensegrityModel.h"
 // This library
@@ -47,7 +47,7 @@
 // Constructor assigns variables, does some simple sanity checks.
 // Also, initializes the accumulator variable timePassed so that it can
 // be incremented in onStep.
-LinkedController::LinkedController(float waterHeight, 
+simpleBCUController::simpleBCUController(float waterHeight, 
                           std::vector<std::string> tagsToControl) :
   m_tagsToControl(tagsToControl),
   m_waterHeight(waterHeight),
@@ -78,10 +78,10 @@ LinkedController::LinkedController(float waterHeight,
  * specific actuators in the rigidWithTags array, as well as store the initial
  * rest lengths in the initialRL map.
  */
-void LinkedController::initializeActuators(TensegrityModel& subject,
+void simpleBCUController::initializeActuators(TensegrityModel& subject,
 						    std::string tag) {
   //DEBUGGING
-  std::cout << "Finding rigidBodies with the tag: " << tag << std::endl;
+  std::cout << "Finding rigidBodies with the tag: " << tag << "\n";
   // Pick out the actuators with the specified tag
   std::vector<tgRod*> foundRigidBodies = subject.find<tgRod>(tag);
   std::cout << "The following rigidBodies were found and will have forces " 
@@ -98,9 +98,9 @@ void LinkedController::initializeActuators(TensegrityModel& subject,
  * which means just store pointers to them and record their rest lengths.
  * This method calls the helper initializeActuators.
  */
-void LinkedController::onSetup(TensegrityModel& subject)
+void simpleBCUController::onSetup(TensegrityModel& subject)
 {
-  std::cout << "Setting up the HorizontalSpine controller." << std::endl;
+  std::cout << "Setting up the HorizontalSpine controller." << "\n";
   //	    << "Finding cables with tags: " << m_tagsToControl
   //	    << std::endl;
   // rigidWithTags = {};
@@ -115,88 +115,33 @@ void LinkedController::onSetup(TensegrityModel& subject)
     rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
   }
 
-  std::cout << "Finished setting up the controller." << std::endl;
+  std::cout << "Finished setting up the controller." << "\n";
 }
 
-void LinkedController::onStep(TensegrityModel& subject, double dt)
+void simpleBCUController::onStep(TensegrityModel& subject, double dt)
 {
-  // Here we take into consideration that only 0.5 radius shere are used
-  const float water_density = 1025;
   // First, increment the accumulator variable.
   m_timePassed += dt;
   // Then, if it's passed the time to start the controller,
   // For each cable, check if its rest length is past the minimum,
   // otherwise adjust its length according to m_rate and dt.
 
-  static double b_force;
-  static tgRod::endPoints endPointPos;
-  for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
-      
-    // Get current position of the object to compute the force
-    // glm::vec3   tempPosition;
+  if( m_timePassed > 2.0 ) {
+    for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
+        
+        if(m_timeBCU > 10.0 && m_timeBCU <= 20.0){
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU() + (dt*50.0));
+        }
+        if(m_timeBCU > 30.0 && m_timeBCU <= 40.0){
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU() - (dt*50.0));
+        }
+        if(m_timeBCU > 50.0){
+          m_timeBCU = 0.0;
+        }
 
-    rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
-    btTransform trans;
-    // rigidWithTags[i]->getPRigidBody()->getMotionState()->getWorldTransform (trans);
-    // currentWaterDepth = -(trans.getOrigin().getY()-m_waterHeight);
+      m_timeBCU += dt;
 
-    endPointPos = rigidWithTags[i]->endPointFinder();
-    currentWaterDepthPos1 = -(endPointPos.absolutePos1.getY()-m_waterHeight);
-    currentWaterDepthPos2 = -(endPointPos.absolutePos2.getY()-m_waterHeight);
     
-    if(DEBUG)
-    {
-      std::cout << "Pos1 x " << endPointPos.absolutePos1.getX() <<
-                 " y " <<       endPointPos.absolutePos1.getY() <<
-                 " z " <<       endPointPos.absolutePos1.getZ() <<
-                 " Pos2 x " <<  endPointPos.absolutePos2.getX() <<
-                 " y " <<       endPointPos.absolutePos2.getY() <<
-                 " z " <<       endPointPos.absolutePos2.getZ() << std::endl;
-
-      if(DEBUGOUTPUT)
-      {
-        m_fout << m_timePassed <<
-              "," << endPointPos.absolutePos1.getX() <<
-              "," << endPointPos.absolutePos1.getY() <<
-              "," << endPointPos.absolutePos1.getZ() <<
-              "," << endPointPos.absolutePos2.getX() <<
-              "," << endPointPos.absolutePos2.getY() <<
-              "," << endPointPos.absolutePos2.getZ() << "\n";
-      }
     }
-
-
-    b_force = ((rigidWithTags[i]->getVolume())*water_density*9.81)/2.0;
-    btVector3 force(btScalar(0.), btScalar(b_force), btScalar(0.)); // force is a btVector3
-
-
-    if(currentWaterDepthPos1 > 0.0){
-      if(DEBUG)
-      {
-        //std::cout << "Controller step Force will be applied to " <<
-        //b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
-      }
-      
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
-      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos1);  
-    }
-    else
-    {
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
-    }
-    if(currentWaterDepthPos2 > 0.0){
-      if(DEBUG)
-      {
-        //std::cout << "Controller step Force will be applied to " <<
-        //b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
-      }
-      
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.3));
-      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos2);  
-    }
-    else
-    {
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
-    }
-  } 
+  }
 }

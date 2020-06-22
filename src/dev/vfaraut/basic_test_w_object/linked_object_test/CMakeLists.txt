@@ -12,7 +12,8 @@ link_libraries(	core
 				TensegrityModel)
 
 add_executable(	AppLinkedObjectTest
-				LinkedController.cpp
+				buoyancySimulator.cpp
 				AppLinkedObjectTest.cpp
-				#UDPServer.cpp
+				simpleBCUController.cpp
+				StepwiseController.cpp
 				)

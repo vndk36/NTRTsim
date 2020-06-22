@@ -10,7 +10,9 @@
 // This application
 #include "yamlbuilder/TensegrityModel.h"
 //include controller
-#include "LinkedController.h"
+#include "buoyancySimulator.h"
+#include "simpleBCUController.h"
+#include "StepwiseController.h"
 // This library
 #include "core/terrain/tgBoxGround.h"
 #include "core/tgModel.h"
@@ -27,7 +29,9 @@
 
 // Forward declarations
 TensegrityModel* createModel(char const *userModelPath);
-void createAndAttachedController(TensegrityModel* const myModel);
+void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel);
+void createAndAttachedBCUController(TensegrityModel* const myModel);
+void createAndAttachedStepwiseController(TensegrityModel* const myModel);
 
 /**
  * Main function that creates model, simulation, and runs it 
@@ -59,7 +63,9 @@ int main(int argc, char const *argv[])
     // create the simulation
     tgSimulation* simulation = new tgSimulation(view);
 
-    createAndAttachedController(myModel);
+    createAndAttachedBuoyancySimulator(myModel);
+    //createAndAttachedBCUController(myModel);
+    createAndAttachedStepwiseController(myModel);
         
 
     simulation->addModel(myModel);
@@ -98,25 +104,100 @@ TensegrityModel* createModel(char const *userModelPath){
 
 
 /**
- * Function that creates the controller and attached it to the given model
- * @param[in] Model that you want your controller to be attached
+ * Creats the buoyancy simulator for rod and attached it to a model
+ * @param[in] Model that you want your buoyancy simulator to be attached to
  */
-void createAndAttachedController(TensegrityModel* const myModel){
+void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
 
-  float waterHeight = 10.0;
+  float waterHeight = 100.0;
   std::vector<std::string> tagsToControl;
 
-  //tagsToControl.push_back("s0");
-  //tagsToControl.push_back("s1");
   // tagsToControl.push_back("alu_rod_up1");
   // tagsToControl.push_back("alu_rod_up2");
   // tagsToControl.push_back("alu_rod_down1");
   // tagsToControl.push_back("alu_rod_down2");
   tagsToControl.push_back("alu_rod");
+
   tgObserver<TensegrityModel>* const controller = 
-    new LinkedController(waterHeight, tagsToControl);
+    new buoyancySimulator(waterHeight, tagsToControl);
 
   myModel->attach(controller);
 
   return;
+}
+
+/**
+ * Creats the buoyancy simulator for rod and attached it to a model
+ * @param[in] Model that you want your buoyancy simulator to be attached to
+ */
+void createAndAttachedBCUController(TensegrityModel* const myModel){
+  float waterHeight = 100.0;
+  std::vector<std::string> tagsToControl;
+
+  // tagsToControl.push_back("alu_rod_up1");
+  // tagsToControl.push_back("alu_rod_up2");
+  // tagsToControl.push_back("alu_rod_down1");
+  tagsToControl.push_back("alu_rod_down2");
+
+  tgObserver<TensegrityModel>* const controller = 
+    new simpleBCUController(waterHeight, tagsToControl);
+
+  myModel->attach(controller);
+
+  return;
+}
+
+void createAndAttachedStepwiseController(TensegrityModel* const myModel){
+  // Attach a controller to the model, if desired.
+    // This is a controller that interacts with a generic TensegrityModel as
+    // built by the TensegrityModel file
+
+    // Parameters for the SingleCableController or StewiseController are specified in that .h file,
+    // repeated here:
+    double startTime = 5.0;
+    double stepTime = 10.0;
+    double minLength = 0.1;
+    double rate = 3.5;
+    std::vector<std::string> tagsToControl;
+    //tagsToControl.push_back("m18"); // Tag located in SBv2_yaml_files/SBv2_model.yaml line: 28
+
+    tagsToControl.push_back("m10");
+    tagsToControl.push_back("m01");
+    tagsToControl.push_back("m21");
+    tagsToControl.push_back("m15");
+    tagsToControl.push_back("m08");
+    tagsToControl.push_back("m20");
+
+    // tagsToControl.push_back("m01");
+    // tagsToControl.push_back("m02");
+    // tagsToControl.push_back("m03");
+    // tagsToControl.push_back("m04");
+    // tagsToControl.push_back("m05");
+    // tagsToControl.push_back("m06");
+    // tagsToControl.push_back("m07");
+    // tagsToControl.push_back("m08");
+    // tagsToControl.push_back("m09");
+    // tagsToControl.push_back("m10");
+    // tagsToControl.push_back("m11");
+    // tagsToControl.push_back("m12");
+    // tagsToControl.push_back("m13");
+    // tagsToControl.push_back("m14");
+    // tagsToControl.push_back("m15");
+    // tagsToControl.push_back("m16");
+    // tagsToControl.push_back("m17");
+    // tagsToControl.push_back("m18");
+    // tagsToControl.push_back("m19");
+    // tagsToControl.push_back("m20");
+    // tagsToControl.push_back("m21");
+    // tagsToControl.push_back("m22");
+    // tagsToControl.push_back("m23");
+    // tagsToControl.push_back("m24");
+
+    // Call the constructor for the controller
+    StepwiseController* const controller =
+      new StepwiseController(startTime, stepTime, minLength, rate, tagsToControl);
+
+    // Attach the controller to the model. Must happen before running the
+    // simulation.
+    myModel->attach(controller);
 }

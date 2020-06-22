@@ -16,11 +16,11 @@
  * governing permissions and limitations under the License.
 */
 
-#ifndef LINKED_CONTROLLER_H
-#define LINKED_CONTROLLER_H
+#ifndef BUOYANCY_SIMULATOR_H
+#define BUOYANCY_SIMULATOR_H
 
 /**
- * @file SimpleController.h
+ * @file buoyancySimulator.h
  * @brief Contains the definition of class SimpleController.
  * @author Victor Faraut
  * $Id$
@@ -49,7 +49,7 @@ class tgBasicActuator;
 /**
  * A controller to apply the length change in the cables of SUPERball V2 model
  */
-class LinkedController : public tgObserver<TensegrityModel>
+class buoyancySimulator : public tgObserver<TensegrityModel>
 {
 public:
 
@@ -67,12 +67,12 @@ public:
    * cables upon which to act. All the cables which have a tag in this list of tags
    * will be acted upon by this controller.
    */
-  LinkedController(float waterHeight, std::vector<std::string> tagsToControl);
+  buoyancySimulator(float waterHeight, std::vector<std::string> tagsToControl);
 
   /**
    * Nothing to delete, destructor must be virtual
    */
-  virtual ~LinkedController() { }
+  virtual ~buoyancySimulator() { }
 
   /**
    * Apply the controller. On setup, adjust the cable
@@ -127,4 +127,4 @@ private:
 
 };
 
-#endif // SIMPLE_CONTROLLER_H
+#endif // BUOYANCY_SIMULATOR_H
