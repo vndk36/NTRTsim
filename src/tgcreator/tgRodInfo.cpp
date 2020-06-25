@@ -100,7 +100,8 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     const double volume =  M_PI * radius * radius * length;
     // change sphere volume and mass for use in the controller
     rod->setVolume(volume);
-    rod->setMassBCU(volume*density);
+    rod->setMassBCU(volume*density/2.0, 0);
+    rod->setMassBCU(volume*density/2.0, 1);
     rod->setMassBCUMin(volume*density);
     rod->setMassBCUMax(volume*density);
 

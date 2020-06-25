@@ -66,14 +66,49 @@ tgRod::tgRod(btRigidBody* pRigidBody,
   tgBaseRigid(pRigidBody, tags),
   m_length(length)
 {
-        if (pRigidBody == NULL)
-    {
-            throw std::invalid_argument("Pointer to btRigidBody is NULL");
-    }
+  if (pRigidBody == NULL)
+  {
+          throw std::invalid_argument("Pointer to btRigidBody is NULL");
+  }
 
-    // Postcondition
-    assert(invariant());
-    assert(m_pRigidBody == pRigidBody);
+  /* Use the inertia to know the main "orientation" of the rod. This is used to 
+   * compute the end points of the rod used in Buoyancy simulation. The rod 
+   * needs to be constructed in on of the main axis (x,y or z)  
+   */
+  btVector3 inv_inertial = getPRigidBody()->getInvInertiaDiagLocal();
+
+  std::cout << 
+                "  I x " << inv_inertial.getX() <<
+                 " y " <<       inv_inertial.getY() <<
+                 " z " <<       inv_inertial.getZ() << "\n";
+
+  if( inv_inertial.getX() > inv_inertial.getY() && 
+      inv_inertial.getX() > inv_inertial.getZ())
+  {
+    std::cout << "X"<< "\n";
+    m_orig1 = btVector3((m_length/2.0), 0.0, 0.0);
+    m_orig2 = btVector3(-(m_length/2.0), 0.0, 0.0);
+  }
+
+  if( inv_inertial.getY() > inv_inertial.getX() && 
+      inv_inertial.getY() > inv_inertial.getZ())
+  {
+    std::cout << "Y"<< "\n";
+    m_orig1 = btVector3(0.0, (m_length/2.0), 0.0);
+    m_orig2 = btVector3(0.0, -(m_length/2.0), 0.0);
+  }
+
+  if( inv_inertial.getZ() > inv_inertial.getX() && 
+      inv_inertial.getZ() > inv_inertial.getY())
+  {
+    std::cout << "Z"<< "\n";
+    m_orig1 = btVector3(0.0, 0.0, (m_length/2.0));
+    m_orig2 = btVector3(0.0, 0.0, -(m_length/2.0));
+  }    
+
+  // Postcondition
+  assert(invariant());
+  assert(m_pRigidBody == pRigidBody);
 }
 
 tgRod::~tgRod() { }
@@ -103,32 +138,28 @@ bool tgRod::invariant() const
 
 tgRod::endPoints tgRod::endPointFinder (void)
 {
-  static endPoints endPointPos;
-  btScalar x = centerOfMass().x(); //output in meters
-  btScalar y = centerOfMass().y();
-  btScalar z = centerOfMass().z();
-  btVector3 com = btVector3(x, y, z);
-  btMatrix3x3 rot = btMatrix3x3(m_pRigidBody->getOrientation());
+  m_com = btVector3(centerOfMass().x(), centerOfMass().y(), centerOfMass().z());
+  m_rot = btMatrix3x3(m_pRigidBody->getOrientation());
   
   
   if(DEBUG)
   {
-    btVector3 rot2 = rot.getRow(0);
+    btVector3 rot2 = m_rot.getRow(0);
     std::cout << rot2.getX() << " " << rot2.getY() << " " << rot2.getZ() << std::endl;
-    rot2 = rot.getRow(1);
+    rot2 = m_rot.getRow(1);
     std::cout << rot2.getX() << " " << rot2.getY() << " " << rot2.getZ() << std::endl;
-    rot2 = rot.getRow(2);
+    rot2 = m_rot.getRow(2);
     std::cout << rot2.getX() << " " << rot2.getY() << " " << rot2.getZ() << std::endl;
   }
 
-  x = (m_length/2.0);
-  y = 0.0;
-  z = 0.0;
-  btVector3 orig1 = btVector3(x, y, z);
-  btVector3 orig2 = btVector3(-x, y, z);
-  endPointPos.relativePos1 = (rot * orig1);
-  endPointPos.relativePos2 = (rot * orig2);
-  endPointPos.absolutePos1 = endPointPos.relativePos1 + com; 
-  endPointPos.absolutePos2 = endPointPos.relativePos2 + com;
-  return endPointPos;
+  // x = (m_length/2.0);
+  // y = 0.0;
+  // z = 0.0;
+  // btVector3 orig1 = btVector3(x, y, z);
+  // btVector3 orig2 = btVector3(-x, y, z);
+  m_endPointPos.relativePos1 = (m_rot * m_orig1);
+  m_endPointPos.relativePos2 = (m_rot * m_orig2);
+  m_endPointPos.absolutePos1 = m_endPointPos.relativePos1 + m_com; 
+  m_endPointPos.absolutePos2 = m_endPointPos.relativePos2 + m_com;
+  return m_endPointPos;
 }

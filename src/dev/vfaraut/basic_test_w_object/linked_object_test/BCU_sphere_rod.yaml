@@ -1,61 +1,14 @@
 nodes:
-  s0: [0, 5, 0]
-  s1: [2, 5, 0]
-  s2: [4, 5, 0]
-  s10: [0, 3, 4]
-  s11: [2, 3, 4]
-  s12: [4, 3, 4]
+  s00: [-2, 5, 0]
+  s01: [2, 5, 0]
+
 
 pair_groups:
-  alu_rod_up1:
-    - [s0, s1]
-  alu_rod_up2:
-    - [s1, s2]
-  alu_rod_down1:
-    - [s10, s11]
-  alu_rod_down2:
-    - [s11, s12]
-  m01:
-    - [s0, s10] # 1, 5
-  m02:
-    - [s2, s12] # 1, 6
+  alu_rod_XZ_0:
+    - [s00, s01]
 
 builders:
-  # s0:
-  #   class: tgSphereInfo
-  #   parameters:
-  #     density: 0
-  #     radius: 0.5
-  #     roll_friction: 0.9
-  #     restitution: 0.0
-
-  # s1:
-  #   class: tgSphereInfo
-  #   parameters:
-  #     density: 0
-  #     radius: 0.5
-  #     roll_friction: 0.9
-  #     restitution: 0.0
-
-  alu_rod_up1:
-    class: tgRodInfo
-    parameters:
-      density: 800
-      radius: 0.175
-      friction: 0.99
-      roll_friction: 0.90
-      restitution: 0.0
-      
-  alu_rod_up2:
-    class: tgRodInfo
-    parameters:
-      density: 800
-      radius: 0.175
-      friction: 0.99
-      roll_friction: 0.90
-      restitution: 0.0
-
-  alu_rod_down1:
+  alu_rod_XZ_0:
     class: tgRodInfo
     parameters:
       density: 1000
@@ -63,27 +16,19 @@ builders:
       friction: 0.99
       roll_friction: 0.90
       restitution: 0.0
-      
-  alu_rod_down2:
-    class: tgRodInfo
+  s00:
+    class: tgSphereInfo
     parameters:
-      density: 1000
-      radius: 0.175
-      friction: 0.99
-      roll_friction: 0.90
+      density: 0
+      radius: 0.008
+      roll_friction: 0.9
+      restitution: 0.0
+  s01:
+    class: tgSphereInfo
+    parameters:
+      density: 0
+      radius: 0.008
+      roll_friction: 0.9
       restitution: 0.0
 
-  baseString: &baseString
-    class: tgBasicActuatorInfo
-    parameters:
-      stiffness: 4000.0
-      damping: 1000.0
-      pretension: 3800.0
-      max_tension: 15000.0
-      target_velocity: 12.0
-      min_actual_length: 0.001
-      min_rest_length: 0.001
-      history: 1
-    
-  m01: *baseString
-  m02: *baseString
+      

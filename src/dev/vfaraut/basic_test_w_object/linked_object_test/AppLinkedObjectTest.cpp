@@ -93,7 +93,7 @@ TensegrityModel* createModel(char const *userModelPath){
       << "was used. If you want to use a custom model, you need to specify it"
 	    << std::endl;
 
-      modelPath = "src/dev/vfaraut/basic_test_w_object/linked_object_test/BCU_sphere_rod.yaml";
+      modelPath = "src/dev/vfaraut/Turtle_YAML/rods_XZ.yaml";
     }
     else
     {
@@ -109,14 +109,15 @@ TensegrityModel* createModel(char const *userModelPath){
  */
 void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
 
-  float waterHeight = 100.0;
+  float waterHeight = 10.0;
   std::vector<std::string> tagsToControl;
 
-  // tagsToControl.push_back("alu_rod_up1");
-  // tagsToControl.push_back("alu_rod_up2");
-  // tagsToControl.push_back("alu_rod_down1");
-  // tagsToControl.push_back("alu_rod_down2");
-  tagsToControl.push_back("alu_rod");
+  tagsToControl.push_back("alu_rod_XZ_0");
+  tagsToControl.push_back("alu_rod_XZ_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_1");
+  tagsToControl.push_back("alu_rod_ZY_0");
+  tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new buoyancySimulator(waterHeight, tagsToControl);
@@ -131,13 +132,15 @@ void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
  * @param[in] Model that you want your buoyancy simulator to be attached to
  */
 void createAndAttachedBCUController(TensegrityModel* const myModel){
-  float waterHeight = 100.0;
+  float waterHeight = 10.0;
   std::vector<std::string> tagsToControl;
 
-  // tagsToControl.push_back("alu_rod_up1");
-  // tagsToControl.push_back("alu_rod_up2");
-  // tagsToControl.push_back("alu_rod_down1");
-  tagsToControl.push_back("alu_rod_down2");
+  tagsToControl.push_back("alu_rod_XZ_0");
+  tagsToControl.push_back("alu_rod_XZ_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_1");
+  tagsToControl.push_back("alu_rod_ZY_0");
+  tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new simpleBCUController(waterHeight, tagsToControl);
@@ -155,9 +158,9 @@ void createAndAttachedStepwiseController(TensegrityModel* const myModel){
     // Parameters for the SingleCableController or StewiseController are specified in that .h file,
     // repeated here:
     double startTime = 5.0;
-    double stepTime = 10.0;
+    double stepTime = 3.0;
     double minLength = 0.1;
-    double rate = 3.5;
+    double rate = 1.0;
     std::vector<std::string> tagsToControl;
     //tagsToControl.push_back("m18"); // Tag located in SBv2_yaml_files/SBv2_model.yaml line: 28
 

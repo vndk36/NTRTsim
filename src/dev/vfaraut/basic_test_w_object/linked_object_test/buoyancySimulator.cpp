@@ -18,7 +18,9 @@
 
 /**
  * @file buoyancySimulator.cpp
- * @brief Implementation of LinkedController. Based on Ultra-Spines HorizontalSpineController
+ * @brief Implementation of a Buoyancy simulation for rod objects in NTRT 
+ * For more information on the implementation see on this drive link: 
+ *  
  * @author Victor Faraut
  * $Id$
  */
@@ -128,8 +130,11 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
   // For each cable, check if its rest length is past the minimum,
   // otherwise adjust its length according to m_rate and dt.
 
-  static double b_force;
+  static double b_force [2];
+  static double *curr_mass;
   static tgRod::endPoints endPointPos;
+
+  static btVector3 test_I;
   for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
       
     // Get current position of the object to compute the force
@@ -143,15 +148,19 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
     endPointPos = rigidWithTags[i]->endPointFinder();
     currentWaterDepthPos1 = -(endPointPos.absolutePos1.getY()-m_waterHeight);
     currentWaterDepthPos2 = -(endPointPos.absolutePos2.getY()-m_waterHeight);
+
+    test_I = rigidWithTags[i]->getPRigidBody()->getInvInertiaDiagLocal();
     
     if(DEBUG)
     {
-      std::cout << "Pos1 x " << endPointPos.absolutePos1.getX() <<
+      std::cout << m_tagsToControl[i] <<
+                "  Pos1 x " << endPointPos.absolutePos1.getX() <<
                  " y " <<       endPointPos.absolutePos1.getY() <<
                  " z " <<       endPointPos.absolutePos1.getZ() <<
                  " Pos2 x " <<  endPointPos.absolutePos2.getX() <<
                  " y " <<       endPointPos.absolutePos2.getY() <<
                  " z " <<       endPointPos.absolutePos2.getZ() << "\n";
+
 
       if(DEBUGOUTPUT)
       {
@@ -166,34 +175,38 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
     }
 
 
-    b_force = ((rigidWithTags[i]->getVolume())*water_density*9.81)/2.0;
-    b_force = b_force + (rigidWithTags[i]->mass()-rigidWithTags[i]->getMassBCU());
-    btVector3 force(btScalar(0.), btScalar(b_force), btScalar(0.)); // force is a btVector3
-
+    b_force[0] = ((rigidWithTags[i]->getVolume())*water_density*9.81)/2.0;
+    b_force[1] = b_force[0];
+    curr_mass = rigidWithTags[i]->getMassBCU();
 
     if(currentWaterDepthPos1 > 0.0){
+      b_force[0] = b_force[0] + (rigidWithTags[i]->mass()-curr_mass[0]);
+      btVector3 force(btScalar(0.), btScalar(b_force[0]), btScalar(0.)); // force is a btVector3
+      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
+      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos1); 
+
       if(DEBUG)
       {
-        //std::cout << "Controller step Force will be applied to " <<
-        //b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
+        std::cout << "Controller step Force will be applied to " <<
+        b_force[0] << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
       }
-      
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.6), btScalar (.5));
-      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos1);  
     }
     else
     {
       rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
     }
+
+
     if(currentWaterDepthPos2 > 0.0){
+      b_force[1] = b_force[1] + (rigidWithTags[i]->mass()-curr_mass[1]);
+      btVector3 force(btScalar(0.), btScalar(b_force[1]), btScalar(0.)); // force is a btVector3
+      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
+      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos2);  
       if(DEBUG)
       {
-        //std::cout << "Controller step Force will be applied to " <<
-        //b_force << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
+        std::cout << "Controller step Force will be applied to " <<
+        b_force[1] << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
       }
-      
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.6), btScalar (.5));
-      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos2);  
     }
     else
     {

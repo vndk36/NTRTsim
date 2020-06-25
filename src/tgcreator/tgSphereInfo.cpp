@@ -100,7 +100,7 @@ tgModel* tgSphereInfo::createModel(tgWorld& world)
     const double volume =  4.0 / 3.0 * M_PI * radius * radius * radius;
     // change sphere volume and mass for use in the controller
     sphere->setVolume(volume);
-    sphere->setMassBCU(volume*density);
+    sphere->setMassBCU(volume*density, 0);
     sphere->setMassBCUMin(volume*density);
     sphere->setMassBCUMax(volume*density);
 

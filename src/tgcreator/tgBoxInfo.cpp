@@ -102,7 +102,7 @@ tgModel* tgBoxInfo::createModel(tgWorld& world)
     const double volume =  length * (width*2) * (height*2);
     // change sphere volume and mass for use in the controller
     box->setVolume(volume);
-    box->setMassBCU(volume*density);
+    box->setMassBCU(volume*density, 0);
     box->setMassBCUMin(volume*density);
     box->setMassBCUMax(volume*density);
 

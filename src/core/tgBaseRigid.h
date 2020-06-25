@@ -93,14 +93,14 @@ public:
         m_volume = setVolume;
     }
 
-    virtual double getMassBCU(void)
+    virtual double* getMassBCU(void)
     {
         return m_massBCU;
     }
 
-    virtual void setMassBCU(double setMass)
+    virtual void setMassBCU(double setMass, int idx)
     {
-        m_massBCU = setMass;
+        m_massBCU[idx] = setMass;
     }
     virtual double getMassBCUMin(void)
     {
@@ -151,7 +151,7 @@ protected:
     const double m_mass;
 
     double m_volume;
-    double m_massBCU;
+    double m_massBCU [2];
     double m_massBCUMin;
     double m_massBCUMax;
 };

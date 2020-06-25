@@ -30,6 +30,7 @@
 #include "tgBaseRigid.h" // @todo: forward declare and move to tgRod.cpp (to be created)
 // The Bullet Physics library
 #include "LinearMath/btVector3.h"
+#include "LinearMath/btMatrix3x3.h"
 // The C++ Standard Library
 #include <vector>
 
@@ -124,6 +125,11 @@ private:
     
     /** The rod's length. The units are application dependent. */
     const double m_length;
+    btVector3 m_com; 
+    btMatrix3x3 m_rot;
+    btVector3 m_orig1;
+    btVector3 m_orig2;
+    endPoints m_endPointPos;
 };
 
 #endif

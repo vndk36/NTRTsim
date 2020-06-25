@@ -130,10 +130,10 @@ void simpleBCUController::onStep(TensegrityModel& subject, double dt)
     for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
         
         if(m_timeBCU > 10.0 && m_timeBCU <= 20.0){
-          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU() + (dt*50.0));
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] + (dt*50.0), 0);
         }
         if(m_timeBCU > 30.0 && m_timeBCU <= 40.0){
-          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU() - (dt*50.0));
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] - (dt*50.0), 0);
         }
         if(m_timeBCU > 50.0){
           m_timeBCU = 0.0;
