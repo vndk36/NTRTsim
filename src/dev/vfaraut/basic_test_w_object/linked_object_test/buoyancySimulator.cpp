@@ -18,17 +18,19 @@
 
 /**
  * @file buoyancySimulator.cpp
- * @brief Implementation of a Buoyancy simulation for rod objects in NTRT 
- * For more information on the implementation see on this drive link: 
- *  
+ * @brief A "controller" that simulates buoyancy for rod objects. All the 
+ * details are available at :
+ * https://docs.google.com/document/d/1O8zBkGAI20gAAwfgTX-zJSVDS1vTR_Rzs0rctpgP9LQ/edit?usp=sharing
  * @author Victor Faraut
  * $Id$
  */
 
 // This module
 #include "buoyancySimulator.h"
+
 // This application
 #include "yamlbuilder/TensegrityModel.h"
+
 // This library
 #include "core/tgBasicActuator.h"
 #include "core/tgSpringCableActuator.h"
@@ -46,24 +48,17 @@
 #define DEBUG 0
 #define DEBUGOUTPUT 0
 
-// Constructor assigns variables, does some simple sanity checks.
-// Also, initializes the accumulator variable timePassed so that it can
-// be incremented in onStep.
-buoyancySimulator::buoyancySimulator(float waterHeight, 
-                          std::vector<std::string> tagsToControl) :
-  m_tagsToControl(tagsToControl),
-  m_waterHeight(waterHeight),
-  m_timePassed(0.0),
-	m_count(0)
-{ 
-  // file pointer 
-  if(DEBUG)
+// Constructor assigns variables, opens the debug file if DEBUGOUTPUT is on and
+buoyancySimulator::buoyancySimulator(float water_height, 
+                          std::vector<std::string> tags_to_control) :
+  tags_to_control_(tags_to_control),
+  water_height_(water_height),
+  time_passed_(0.0)
+{  
+  if(DEBUGOUTPUT)
   { 
     // opens an existing csv file or creates a new file. 
-    m_fout.open("/mnt/c/Users/victo/Desktop/Data.csv", std::ios::out | std::ios::app); 
-
-    // Insert the data to file 
-    // fout << 3 << "\n";
+    fout_.open("/Data.csv", std::ios::out | std::ios::app); 
   }
 
   /* try {
@@ -77,22 +72,24 @@ buoyancySimulator::buoyancySimulator(float waterHeight,
 
 /**
  * The initializeActuators method is call in onSetup to put pointers to
- * specific actuators in the rigidWithTags array, as well as store the initial
- * rest lengths in the initialRL map.
+ * specific rods in the rod_with_tags_ array.
  */
 void buoyancySimulator::initializeActuators(TensegrityModel& subject,
 						    std::string tag) {
-  //DEBUGGING
-  std::cout << "Finding rigidBodies with the tag: " << tag << "\n";
-  // Pick out the actuators with the specified tag
-  std::vector<tgRod*> foundRigidBodies = subject.find<tgRod>(tag);
-  std::cout << "The following rigidBodies were found and will have forces " 
-            "applied to them be controlled: "
-	        << std::endl;
+  if(DEBUG)
+  {
+    std::cout << "Finding rigidBodies with the tag: " << tag << "\n";
+  }  
+
+  /** 
+   * Pick out the actuators with the specified tag. 
+   * They could be multiple with the same tag.
+   */
+  std::vector<tgRod*> found_rigid_bodies = subject.find<tgRod>(tag);
   // Add this list of actuators to the full list. Thanks to:
   // http://stackoverflow.com/questions/201718/concatenating-two-stdvectors
-  rigidWithTags.insert( rigidWithTags.end(), foundRigidBodies.begin(),
-			 foundRigidBodies.end() );
+  rod_with_tags_.insert( rod_with_tags_.end(), found_rigid_bodies.begin(),
+			 found_rigid_bodies.end() );
 }
 
 /**
@@ -102,19 +99,14 @@ void buoyancySimulator::initializeActuators(TensegrityModel& subject,
  */
 void buoyancySimulator::onSetup(TensegrityModel& subject)
 {
-  std::cout << "Setting up the HorizontalSpine controller." << "\n";
-  //	    << "Finding cables with tags: " << m_tagsToControl
-  //	    << std::endl;
-  // rigidWithTags = {};
-  // For all the strings in the list, call initializeActuators.
   std::vector<std::string>::iterator it;
-  for( it = m_tagsToControl.begin(); it < m_tagsToControl.end(); it++ ) {
+  for( it = tags_to_control_.begin(); it < tags_to_control_.end(); it++ ) {
     // Call the helper for this tag.
     initializeActuators(subject, *it);
   }
 
-  for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
-    rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+  for (std::size_t i = 0; i < rod_with_tags_.size(); i ++) {
+    rod_with_tags_[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
   }
 
   std::cout << "Finished setting up the controller." << "\n";
@@ -122,95 +114,84 @@ void buoyancySimulator::onSetup(TensegrityModel& subject)
 
 void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 {
-  // Here we take into consideration that only 0.5 radius shere are used
+  // Water density at sea level
   const float water_density = 1025;
-  // First, increment the accumulator variable.
-  m_timePassed += dt;
-  // Then, if it's passed the time to start the controller,
-  // For each cable, check if its rest length is past the minimum,
-  // otherwise adjust its length according to m_rate and dt.
 
-  static double b_force [2];
-  static double *curr_mass;
-  static tgRod::endPoints endPointPos;
+  // Increment the time passed to match  current time.
+  time_passed_ += dt;
+  
+  /** Buoyancy force that will be used at each en of a rod. 
+   * Will be recompute at each object. Used static to avoid recreating it each 
+   * time. */
+  static double tmp_b_force [2];
 
-  static btVector3 test_I;
-  for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
-      
-    // Get current position of the object to compute the force
-    // glm::vec3   tempPosition;
+  /** Pointer to an array of two values. One for each end of the rod */
+  static double *tmp_curr_mass;
 
-    rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
-    btTransform trans;
-    // rigidWithTags[i]->getPRigidBody()->getMotionState()->getWorldTransform (trans);
-    // currentWaterDepth = -(trans.getOrigin().getY()-m_waterHeight);
+  /** End point struct used to position information for rods */
+  static tgRod::endPoints tmp_end_point_pos;
 
-    endPointPos = rigidWithTags[i]->endPointFinder();
-    currentWaterDepthPos1 = -(endPointPos.absolutePos1.getY()-m_waterHeight);
-    currentWaterDepthPos2 = -(endPointPos.absolutePos2.getY()-m_waterHeight);
+  /** Loop that goes throught all the rod_with_tags and apply the buoyancy force */
+  for (std::size_t i = 0; i < rod_with_tags_.size(); i ++) 
+  {
 
-    test_I = rigidWithTags[i]->getPRigidBody()->getInvInertiaDiagLocal();
-    
+    //rod_with_tags_[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+
+    tmp_end_point_pos = rod_with_tags_[i]->endPointFinder();
+
+    int nb_end_points = tmp_end_point_pos.absolute_pos.size();
+    tmp_b_force[0] = ((rod_with_tags_[i]->getVolume())*water_density*9.81)/double(nb_end_points);
+
+    for (std::size_t j = 0; j < nb_end_points; j ++)
+    {
+      /** 
+       * Compute the std buoyancy force frome the volume of the rod itself. 
+       * Then is divided by 2 to get one force per end. And finaly the delta force
+       * from the BCU is added or substracted 
+       */
+      current_water_depth_pos1_ = -(tmp_end_point_pos.absolute_pos[j].getY()-water_height_);
+      tmp_b_force[0] = ((rod_with_tags_[i]->getVolume())*water_density*9.81)/double(nb_end_points);
+      tmp_curr_mass = rod_with_tags_[i]->getMassBCU();
+
+      if(current_water_depth_pos1_ > 0.0){
+      tmp_b_force[1] = tmp_b_force[0] + (rod_with_tags_[i]->mass()-tmp_curr_mass[j]);
+      btVector3 force(btScalar(0.), btScalar(tmp_b_force[1]), btScalar(0.)); // force is a btVector3
+      rod_with_tags_[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
+      rod_with_tags_[i]->getPRigidBody()->applyForce(force,tmp_end_point_pos.relative_pos[j]); 
+
+      if(DEBUG)
+      {
+        std::cout << "Controller step Force will be applied to " <<
+        tmp_b_force[0] << "   " << rod_with_tags_[i]->mass() << tags_to_control_[i] << std::endl;
+      }
+      }
+      else
+      {
+        rod_with_tags_[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
+      }
+    }
+    /* 
     if(DEBUG)
     {
-      std::cout << m_tagsToControl[i] <<
-                "  Pos1 x " << endPointPos.absolutePos1.getX() <<
-                 " y " <<       endPointPos.absolutePos1.getY() <<
-                 " z " <<       endPointPos.absolutePos1.getZ() <<
-                 " Pos2 x " <<  endPointPos.absolutePos2.getX() <<
-                 " y " <<       endPointPos.absolutePos2.getY() <<
-                 " z " <<       endPointPos.absolutePos2.getZ() << "\n";
+      std::cout << tags_to_control_[i] <<
+                "  Pos1 x " << tmp_end_point_pos.absolute_pos[0].getX() <<
+                 " y " <<       tmp_end_point_pos.absolute_pos[0].getY() <<
+                 " z " <<       tmp_end_point_pos.absolute_pos[0].getZ() <<
+                 " Pos2 x " <<  tmp_end_point_pos.absolute_pos[1].getX() <<
+                 " y " <<       tmp_end_point_pos.absolute_pos[1].getY() <<
+                 " z " <<       tmp_end_point_pos.absolute_pos[1].getZ() << "\n";
 
 
       if(DEBUGOUTPUT)
       {
-        m_fout << m_timePassed <<
-              "," << endPointPos.absolutePos1.getX() <<
-              "," << endPointPos.absolutePos1.getY() <<
-              "," << endPointPos.absolutePos1.getZ() <<
-              "," << endPointPos.absolutePos2.getX() <<
-              "," << endPointPos.absolutePos2.getY() <<
-              "," << endPointPos.absolutePos2.getZ() << "\n";
+        fout_ << time_passed_ <<
+              "," << tmp_end_point_pos.absolute_pos[0].getX() <<
+              "," << tmp_end_point_pos.absolute_pos[0].getY() <<
+              "," << tmp_end_point_pos.absolute_pos[0].getZ() <<
+              "," << tmp_end_point_pos.absolute_pos[1].getX() <<
+              "," << tmp_end_point_pos.absolute_pos[1].getY() <<
+              "," << tmp_end_point_pos.absolute_pos[1].getZ() << "\n";
       }
-    }
-
-
-    b_force[0] = ((rigidWithTags[i]->getVolume())*water_density*9.81)/2.0;
-    b_force[1] = b_force[0];
-    curr_mass = rigidWithTags[i]->getMassBCU();
-
-    if(currentWaterDepthPos1 > 0.0){
-      b_force[0] = b_force[0] + (rigidWithTags[i]->mass()-curr_mass[0]);
-      btVector3 force(btScalar(0.), btScalar(b_force[0]), btScalar(0.)); // force is a btVector3
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
-      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos1); 
-
-      if(DEBUG)
-      {
-        std::cout << "Controller step Force will be applied to " <<
-        b_force[0] << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
-      }
-    }
-    else
-    {
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
-    }
-
-
-    if(currentWaterDepthPos2 > 0.0){
-      b_force[1] = b_force[1] + (rigidWithTags[i]->mass()-curr_mass[1]);
-      btVector3 force(btScalar(0.), btScalar(b_force[1]), btScalar(0.)); // force is a btVector3
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
-      rigidWithTags[i]->getPRigidBody()->applyForce(force,endPointPos.relativePos2);  
-      if(DEBUG)
-      {
-        std::cout << "Controller step Force will be applied to " <<
-        b_force[1] << "   " << rigidWithTags[i]->mass() << m_tagsToControl[i] << std::endl;
-      }
-    }
-    else
-    {
-      rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
-    }
+    } */
   } 
 }

@@ -32,3 +32,4 @@ src/.settings/org.eclipse.cdt.codan.core.prefs
 *.bbl
 *.blg
 *eps-converted-to.pdf
+.vscode/settings.json

@@ -21,7 +21,9 @@
 
 /**
  * @file buoyancySimulator.h
- * @brief Contains the definition of class SimpleController.
+ * @brief A "controller" that simulates buoyancy for rod objects. All the 
+ * details are available at :
+ * https://docs.google.com/document/d/1O8zBkGAI20gAAwfgTX-zJSVDS1vTR_Rzs0rctpgP9LQ/edit?usp=sharing
  * @author Victor Faraut
  * $Id$
  */
@@ -32,7 +34,7 @@
 #include "core/tgBaseRigid.h" 
 #include "core/tgRod.h"
 
-//Bullet library
+// Bullet library
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btTransform.h"
 
@@ -54,20 +56,13 @@ class buoyancySimulator : public tgObserver<TensegrityModel>
 public:
 
   /**
-   * Construct a StepwiseController.
-   * @param[in] startTime, a double that determines when the controller
-   * begins its motion, how many seconds after the simulation starts.
-   * @param[in] minLength, a double that is the percent of the initial length
-   * that this controller will reduce down to. E.g., if minLength = 0.25,
-   * controller will act until the rest length of the cables is 25% of initial.
-   * @param[in] rate, the rate at which the rest length of the cables will be
-   * changed. Expressed in meters/sec.
-   * @param[in] tagsToControl, a vector (array) of strings, which is a list of the
-   * tags of all the
-   * cables upon which to act. All the cables which have a tag in this list of tags
-   * will be acted upon by this controller.
+   * Construct the buoyancy simulator controller for the given objects.
+   * @param[in] waterHeight, Height of the simulated water. Above this height 
+   * the buoyancy force will not be applied.
+   * @param[in] tagsToControl, a vector (array) of strings, which is a list of 
+   * the tags of all the rods upon which to act.
    */
-  buoyancySimulator(float waterHeight, std::vector<std::string> tagsToControl);
+  buoyancySimulator(float water_height, std::vector<std::string> tags_to_control);
 
   /**
    * Nothing to delete, destructor must be virtual
@@ -78,14 +73,15 @@ public:
    * Apply the controller. On setup, adjust the cable
    * lengths one time.
    * @param[in] subject - the TensegrityModel that is being controlled. Must
-   * have a list of allMuscles populated
+   * have a list of all tg objects controlled
    */
   virtual void onSetup(TensegrityModel& subject);
 
   /**
-   * The onStep method is not used for this controller.
+   * The onStep method is used to add the buoyancy force each time the 
+   * simulation gets recomputed.
    * @param[in] subject - the TensegrityModel that is being controlled. Must
-   * have a list of allMuscles populated
+   * have a list of all tg objects controlled
    * @param[in] dt, current timestep must be positive
    */
   virtual void onStep(TensegrityModel& subject, double dt);
@@ -97,33 +93,29 @@ void initializeActuators(TensegrityModel& subject, std::string tag);
 
 private:
   /**
-   * The private variables for each of the values passed in to the constructor.
+   * Vector that stores the tags of all the tgRod that have buoyancy applied 
    */
-  std::vector<std::string> m_tagsToControl;
+  std::vector<std::string> tags_to_control_;
 
-  /**
-   * Need an accumulator variable to determine when to start the controller.
-   */
-  double m_timePassed;
-  double m_previousTime;
-  int m_count;
-  float m_waterHeight;
-  float currentWaterDepthPos1;
-  float currentWaterDepthPos2;
-  btScalar buoyancyForce;
-
-  
   /**
    * A list of all the actuators to control. This is populated in onSetup
    * by using m_tagsToControl.
    */
-  std::vector<tgRod*> rigidWithTags;
+  std::vector<tgRod*> rod_with_tags_;
 
 
-  // file pointer 
-  std::ofstream m_fout; 
+  // time passed used for timestep on logs
+  double time_passed_;
 
-  
+  // stores the water height to be compared to point position
+  float water_height_;
+
+  // Current position of the end point of the rod. This is changed for each rod
+  double current_water_depth_pos1_;
+  double current_water_depth_pos2_;
+
+  // file pointer for log
+  std::ofstream fout_; 
 
 };
 

@@ -102,21 +102,35 @@ public:
      */
     double length() const { return m_length; }
 
-    /**
-     * 
-     * 
+    /** Struct that stores the relative and absolute position of the end points  
      */
     struct endPoints
     {
-        btVector3 relativePos1;
-        btVector3 relativePos2;
-        btVector3 absolutePos1;
-        btVector3 absolutePos2;
+        std::vector<btVector3> relative_pos;
+        std::vector<btVector3> absolute_pos;
     };
 
+    /**
+     * Finds and returns the end points of the rod. It returns an endpoint struct 
+     * that contains relative positions from the rod center point and absolut
+     * positions from the world referneces. 
+     *
+     * @param[in] void.
+     * @return endpoint structure that has the relative and absolute positon of the
+     * end points.
+     */
     endPoints endPointFinder (void);
 
 private:
+
+    /** 
+     * Use the inertia to know the main "orientation" of the rod. This is used to 
+     * compute the end points of the rod used in Buoyancy simulation. The rod 
+     * needs to be constructed on one of the main axis (x,y or z) only. 
+     * @param[in] void.
+     * @return void.
+     */
+    void main_axis_setup(void);
 
     /** Integrity predicate. */
     bool invariant() const;
