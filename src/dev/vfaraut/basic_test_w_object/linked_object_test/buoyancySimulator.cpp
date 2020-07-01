@@ -115,7 +115,7 @@ void buoyancySimulator::onSetup(TensegrityModel& subject)
 void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 {
   // Water density at sea level
-  const float water_density = 1025;
+  const float water_density = 1.025;
 
   // Increment the time passed to match  current time.
   time_passed_ += dt;
@@ -134,6 +134,8 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
   /** Loop that goes throught all the rod_with_tags and apply the buoyancy force */
   for (std::size_t i = 0; i < rod_with_tags_.size(); i ++) 
   {
+
+    std::cout << "mass " << rod_with_tags_[i]->mass() << "\n";
 
     //rod_with_tags_[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 

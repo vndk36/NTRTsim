@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
     // Creates a new ground object
     tgBoxGround* ground = new tgBoxGround();
 
-    const tgWorld::Config config(9.81);
+    const tgWorld::Config config(98.1);
     tgWorld world(config, ground); 
 
     // create the view
@@ -63,7 +63,7 @@ int main(int argc, char const *argv[])
     // create the simulation
     tgSimulation* simulation = new tgSimulation(view);
 
-    createAndAttachedBuoyancySimulator(myModel);
+    //createAndAttachedBuoyancySimulator(myModel);
     //createAndAttachedBCUController(myModel);
     createAndAttachedStepwiseController(myModel);
         
@@ -109,7 +109,7 @@ TensegrityModel* createModel(char const *userModelPath){
  */
 void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
 
-  float waterHeight = 10.0;
+  float waterHeight = 0.0;
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
@@ -160,7 +160,7 @@ void createAndAttachedStepwiseController(TensegrityModel* const myModel){
     double startTime = 5.0;
     double stepTime = 3.0;
     double minLength = 0.1;
-    double rate = 1.0;
+    double rate = 0.5;
     std::vector<std::string> tagsToControl;
     //tagsToControl.push_back("m18"); // Tag located in SBv2_yaml_files/SBv2_model.yaml line: 28
 
