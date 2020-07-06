@@ -1,9 +1,9 @@
 nodes:
-  s00: [-0.5, -1, 0]
-  s01: [-0.5, 1, 0]
+  s00: [-5, -10, 0]
+  s01: [-5, 10, 0]
 
-  s10: [0.5, -1, 0]
-  s11: [0.5, 1, 0]
+  s10: [5, -10, 0]
+  s11: [5, 10, 0]
 
 pair_groups:
   alu_rod_YX_0:
@@ -15,8 +15,8 @@ builders:
   alu_rod_YX_0:
     class: tgRodInfo
     parameters:
-      density: 1.200
-      radius: 0.08
+      density: 1.100
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.90
       restitution: 0.0
@@ -25,7 +25,7 @@ builders:
     class: tgSphereInfo
     parameters:
       density: 0
-      radius: 0.08
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.9
       restitution: 0.0
@@ -33,7 +33,7 @@ builders:
     class: tgSphereInfo
     parameters:
       density: 0
-      radius: 0.08
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.9
       restitution: 0.0
@@ -41,8 +41,8 @@ builders:
   alu_rod_YX_1:
     class: tgRodInfo
     parameters:
-      density: 1.200
-      radius: 0.08
+      density: 1.100
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.90
       restitution: 0.0
@@ -51,7 +51,7 @@ builders:
     class: tgSphereInfo
     parameters:
       density: 0
-      radius: 0.08
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.9
       restitution: 0.0
@@ -59,7 +59,7 @@ builders:
     class: tgSphereInfo
     parameters:
       density: 0
-      radius: 0.08
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.9
       restitution: 0.0

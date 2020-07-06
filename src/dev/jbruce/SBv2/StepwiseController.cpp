@@ -134,6 +134,8 @@ void StepwiseController::onStep(TensegrityModel& subject, double dt)
 {
   // First, increment the accumulator variable.
   m_timePassed += dt;
+
+  std::cout << dt <<"\n";
   // Then, if it's passed the time to start the controller,
   if( m_timePassed > m_startTime ) {
     // For each cable, check if its rest length is past the minimum,
@@ -174,7 +176,7 @@ void StepwiseController::onStep(TensegrityModel& subject, double dt)
 				}
 			}
 			//DEBUGGING
-			//std::cout << "Next Rest Length: " << nextRestLength << std::endl;
+			std::cout << "Next Rest Length: " << nextRestLength << std::endl;
 			cablesWithTags[i]->setControlInput(nextRestLength,dt);
     }
   }

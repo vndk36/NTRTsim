@@ -109,7 +109,7 @@ TensegrityModel* createModel(char const *userModelPath){
  */
 void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
 
-  float waterHeight = 0.0;
+  float waterHeight = 1000.0;
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
@@ -158,8 +158,9 @@ void createAndAttachedStepwiseController(TensegrityModel* const myModel){
     // Parameters for the SingleCableController or StewiseController are specified in that .h file,
     // repeated here:
     double startTime = 5.0;
-    double stepTime = 3.0;
+    double stepTime = 7.0;
     double minLength = 0.1;
+    double maxLength = 100;
     double rate = 0.5;
     std::vector<std::string> tagsToControl;
     //tagsToControl.push_back("m18"); // Tag located in SBv2_yaml_files/SBv2_model.yaml line: 28
@@ -198,7 +199,7 @@ void createAndAttachedStepwiseController(TensegrityModel* const myModel){
 
     // Call the constructor for the controller
     StepwiseController* const controller =
-      new StepwiseController(startTime, stepTime, minLength, rate, tagsToControl);
+      new StepwiseController(startTime, stepTime, minLength, maxLength, rate, tagsToControl);
 
     // Attach the controller to the model. Must happen before running the
     // simulation.

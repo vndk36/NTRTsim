@@ -61,8 +61,8 @@ public:
    * cables upon which to act. All the cables which have a tag in this list of tags
    * will be acted upon by this controller.
    */
-  StepwiseController(double startTime, double stepTime, double minLength, double rate,
-			    std::vector<std::string> tagsToControl);
+  StepwiseController(double startTime, double stepTime, double minLength, 
+          double maxLength, double rate,std::vector<std::string> tagsToControl);
 
   /**
    * Nothing to delete, destructor must be virtual
@@ -103,6 +103,7 @@ private:
   double m_startTime;
   double m_stepTime;
   double m_minLength;
+  double m_maxLength;
   double m_rate;
   std::vector<std::string> m_tagsToControl;
 

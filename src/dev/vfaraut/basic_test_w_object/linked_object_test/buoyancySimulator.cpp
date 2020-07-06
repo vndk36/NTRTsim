@@ -49,16 +49,16 @@
 #define DEBUGOUTPUT 0
 
 // Constructor assigns variables, opens the debug file if DEBUGOUTPUT is on and
-buoyancySimulator::buoyancySimulator(float water_height, 
-                          std::vector<std::string> tags_to_control) :
-  tags_to_control_(tags_to_control),
-  water_height_(water_height),
-  time_passed_(0.0)
+buoyancySimulator::buoyancySimulator(float waterHeight, 
+                          std::vector<std::string> tagsToControl) :
+  m_tagsToControl(tagsToControl),
+  m_waterHeight(waterHeight),
+  m_timePassed(0.0)
 {  
   if(DEBUGOUTPUT)
   { 
     // opens an existing csv file or creates a new file. 
-    fout_.open("/Data.csv", std::ios::out | std::ios::app); 
+    m_fout.open("/Data.csv", std::ios::out | std::ios::app); 
   }
 
   /* try {
@@ -72,7 +72,7 @@ buoyancySimulator::buoyancySimulator(float water_height,
 
 /**
  * The initializeActuators method is call in onSetup to put pointers to
- * specific rods in the rod_with_tags_ array.
+ * specific rods in the m_rodWithTags array.
  */
 void buoyancySimulator::initializeActuators(TensegrityModel& subject,
 						    std::string tag) {
@@ -85,11 +85,11 @@ void buoyancySimulator::initializeActuators(TensegrityModel& subject,
    * Pick out the actuators with the specified tag. 
    * They could be multiple with the same tag.
    */
-  std::vector<tgRod*> found_rigid_bodies = subject.find<tgRod>(tag);
+  std::vector<tgRod*> foundRigidBodies = subject.find<tgRod>(tag);
   // Add this list of actuators to the full list. Thanks to:
   // http://stackoverflow.com/questions/201718/concatenating-two-stdvectors
-  rod_with_tags_.insert( rod_with_tags_.end(), found_rigid_bodies.begin(),
-			 found_rigid_bodies.end() );
+  m_rodWithTags.insert( m_rodWithTags.end(), foundRigidBodies.begin(),
+			 foundRigidBodies.end() );
 }
 
 /**
@@ -100,13 +100,13 @@ void buoyancySimulator::initializeActuators(TensegrityModel& subject,
 void buoyancySimulator::onSetup(TensegrityModel& subject)
 {
   std::vector<std::string>::iterator it;
-  for( it = tags_to_control_.begin(); it < tags_to_control_.end(); it++ ) {
+  for( it = m_tagsToControl.begin(); it < m_tagsToControl.end(); it++ ) {
     // Call the helper for this tag.
     initializeActuators(subject, *it);
   }
 
-  for (std::size_t i = 0; i < rod_with_tags_.size(); i ++) {
-    rod_with_tags_[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+  for (std::size_t i = 0; i < m_rodWithTags.size(); i ++) {
+    m_rodWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
   }
 
   std::cout << "Finished setting up the controller." << "\n";
@@ -115,34 +115,34 @@ void buoyancySimulator::onSetup(TensegrityModel& subject)
 void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 {
   // Water density at sea level
-  const float water_density = 1.025;
+  const float waterDensity = 1.025;
 
   // Increment the time passed to match  current time.
-  time_passed_ += dt;
+  m_timePassed += dt;
   
   /** Buoyancy force that will be used at each en of a rod. 
    * Will be recompute at each object. Used static to avoid recreating it each 
    * time. */
-  static double tmp_b_force [2];
+  static double tmpBForce [2];
 
   /** Pointer to an array of two values. One for each end of the rod */
-  static double *tmp_curr_mass;
+  static double *tmpCurrMass;
 
   /** End point struct used to position information for rods */
-  static tgRod::endPoints tmp_end_point_pos;
+  static tgRod::endPoints tmpEndPointPos;
 
   /** Loop that goes throught all the rod_with_tags and apply the buoyancy force */
-  for (std::size_t i = 0; i < rod_with_tags_.size(); i ++) 
+  for (std::size_t i = 0; i < m_rodWithTags.size(); i ++) 
   {
 
-    std::cout << "mass " << rod_with_tags_[i]->mass() << "\n";
+    //std::cout << "mass " << m_rodWithTags[i]->mass() << "\n";
 
-    //rod_with_tags_[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
+    //m_rodWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 
-    tmp_end_point_pos = rod_with_tags_[i]->endPointFinder();
+    tmpEndPointPos = m_rodWithTags[i]->endPointFinder();
 
-    int nb_end_points = tmp_end_point_pos.absolute_pos.size();
-    tmp_b_force[0] = ((rod_with_tags_[i]->getVolume())*water_density*9.81)/double(nb_end_points);
+    int nb_end_points = tmpEndPointPos.absolute_pos.size();
+    tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*9.81)/double(nb_end_points);
 
     for (std::size_t j = 0; j < nb_end_points; j ++)
     {
@@ -151,48 +151,52 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
        * Then is divided by 2 to get one force per end. And finaly the delta force
        * from the BCU is added or substracted 
        */
-      current_water_depth_pos1_ = -(tmp_end_point_pos.absolute_pos[j].getY()-water_height_);
-      tmp_b_force[0] = ((rod_with_tags_[i]->getVolume())*water_density*9.81)/double(nb_end_points);
-      tmp_curr_mass = rod_with_tags_[i]->getMassBCU();
+      m_currentWaterDepthPos1 = -(tmpEndPointPos.absolute_pos[j].getY()-m_waterHeight);
+      tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*98.1)/double(nb_end_points);
+      tmpCurrMass = m_rodWithTags[i]->getMassBCU();
 
-      if(current_water_depth_pos1_ > 0.0){
-      tmp_b_force[1] = tmp_b_force[0] + (rod_with_tags_[i]->mass()-tmp_curr_mass[j]);
-      btVector3 force(btScalar(0.), btScalar(tmp_b_force[1]), btScalar(0.)); // force is a btVector3
-      rod_with_tags_[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
-      rod_with_tags_[i]->getPRigidBody()->applyForce(force,tmp_end_point_pos.relative_pos[j]); 
+      if(m_currentWaterDepthPos1 > 0.0){
+      tmpBForce[1] = tmpBForce[0] + (m_rodWithTags[i]->mass()-tmpCurrMass[j]);
+      btVector3 force(btScalar(0.), btScalar(tmpBForce[1]), btScalar(0.)); // force is a btVector3
+      m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
+      m_rodWithTags[i]->getPRigidBody()->applyForce(force,tmpEndPointPos.relative_pos[j]); 
 
       if(DEBUG)
       {
-        std::cout << "Controller step Force will be applied to " <<
-        tmp_b_force[0] << "   " << rod_with_tags_[i]->mass() << tags_to_control_[i] << std::endl;
+        std::cout << "Controller step Force will be applied to " << 
+                      m_tagsToControl[i] << std::endl;
+        std::cout << m_tagsToControl[i] <<
+                "  Pos x " << tmpEndPointPos.absolute_pos[j].getX() <<
+                 " y " <<       tmpEndPointPos.absolute_pos[j].getY() <<
+                 " z " <<       tmpEndPointPos.absolute_pos[j].getZ() << "\n";
       }
       }
       else
       {
-        rod_with_tags_[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
+        m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
       }
     }
     /* 
     if(DEBUG)
     {
-      std::cout << tags_to_control_[i] <<
-                "  Pos1 x " << tmp_end_point_pos.absolute_pos[0].getX() <<
-                 " y " <<       tmp_end_point_pos.absolute_pos[0].getY() <<
-                 " z " <<       tmp_end_point_pos.absolute_pos[0].getZ() <<
-                 " Pos2 x " <<  tmp_end_point_pos.absolute_pos[1].getX() <<
-                 " y " <<       tmp_end_point_pos.absolute_pos[1].getY() <<
-                 " z " <<       tmp_end_point_pos.absolute_pos[1].getZ() << "\n";
+      std::cout << m_tagsToControl[i] <<
+                "  Pos1 x " << tmpEndPointPos.absolute_pos[0].getX() <<
+                 " y " <<       tmpEndPointPos.absolute_pos[0].getY() <<
+                 " z " <<       tmpEndPointPos.absolute_pos[0].getZ() <<
+                 " Pos2 x " <<  tmpEndPointPos.absolute_pos[1].getX() <<
+                 " y " <<       tmpEndPointPos.absolute_pos[1].getY() <<
+                 " z " <<       tmpEndPointPos.absolute_pos[1].getZ() << "\n";
 
 
       if(DEBUGOUTPUT)
       {
-        fout_ << time_passed_ <<
-              "," << tmp_end_point_pos.absolute_pos[0].getX() <<
-              "," << tmp_end_point_pos.absolute_pos[0].getY() <<
-              "," << tmp_end_point_pos.absolute_pos[0].getZ() <<
-              "," << tmp_end_point_pos.absolute_pos[1].getX() <<
-              "," << tmp_end_point_pos.absolute_pos[1].getY() <<
-              "," << tmp_end_point_pos.absolute_pos[1].getZ() << "\n";
+        m_fout << m_timePassed <<
+              "," << tmpEndPointPos.absolute_pos[0].getX() <<
+              "," << tmpEndPointPos.absolute_pos[0].getY() <<
+              "," << tmpEndPointPos.absolute_pos[0].getZ() <<
+              "," << tmpEndPointPos.absolute_pos[1].getX() <<
+              "," << tmpEndPointPos.absolute_pos[1].getY() <<
+              "," << tmpEndPointPos.absolute_pos[1].getZ() << "\n";
       }
     } */
   } 

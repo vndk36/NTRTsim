@@ -42,17 +42,22 @@
 #include "helpers/FileHelpers.h"
 #include <stdexcept>
 
+// Precision multiplier to avoid overshoot
+#define PRECISION_MILTIPLIER 1000.0
+
 // Constructor assigns variables, does some simple sanity checks.
 // Also, initializes the accumulator variable timePassed so that it can
 // be incremented in onStep.
 StepwiseController::StepwiseController(double startTime,
 								 double stepTime,
 						     double minLength,
+                 double maxLength,
 						     double rate,
 						     std::vector<std::string> tagsToControl) :
   m_startTime(startTime),
 	m_stepTime(stepTime),
   m_minLength(minLength),
+  m_maxLength(maxLength),
   m_rate(rate),
   m_tagsToControl(tagsToControl),
   m_timePassed(0.0),
@@ -133,49 +138,52 @@ void StepwiseController::onSetup(TensegrityModel& subject)
 void StepwiseController::onStep(TensegrityModel& subject, double dt)
 {
   // First, increment the accumulator variable.
+  std::cout << dt << "\n";
   m_timePassed += dt;
+
   // Then, if it's passed the time to start the controller,
-  if( m_timePassed > m_startTime ) {
+  if( m_timePassed > m_startTime ) {     
     // For each cable, check if its rest length is past the minimum,
     // otherwise adjust its length according to m_rate and dt.
     for (std::size_t i = 0; i < cablesWithTags.size(); i ++) {
-      double currRestLength = cablesWithTags[i]->getRestLength();
-			double nextRestLength;
-			// Only adjust the cable one at a time in order of the cablesWithTags list
-			// at a rate govered by m_stepTime
-			if(i == m_count){
-				// Calculate the minimum rest length for this cable.
-	      // Remember that m_minLength is a percent.
-	      double minRestLength = initialRL[cablesWithTags[i]->getTags()] * m_minLength;
-	      // If the current rest length is still greater than the minimum,
-	      if( currRestLength > minRestLength ) {
-	      	// output a progress bar for the controller, to track when control occurs.
-	      	// std::cout << "." << i;
-	      	// Then, adjust the rest length of the actuator itself, according to
-	      	// m_rate and dt.
-	      	nextRestLength = currRestLength - m_rate * dt;
-					if(nextRestLength <= 0){
-						nextRestLength = minRestLength;
-					}
-	      }
-			}
-			else {
-				if(currRestLength < initialRL[cablesWithTags[i]->getTags()]){
-					// Then, adjust the rest length of the actuator itself, according to
-	      	// m_rate and dt.
-					nextRestLength = currRestLength + m_rate * dt;
-				}
-			}
-			if((m_timePassed - m_previousTime) > m_stepTime){
-				m_previousTime = m_timePassed;
-				m_count++;
-				if(m_count > 5){
-					m_count = 0;
-				}
-			}
-			//DEBUGGING
-			//std::cout << "Next Rest Length: " << nextRestLength << std::endl;
-			cablesWithTags[i]->setControlInput(nextRestLength,dt);
+      double currRestLength = cablesWithTags[i]->getRestLength() * PRECISION_MILTIPLIER;
+      double nextRestLength;
+      // Only adjust the cable one at a time in order of the cablesWithTags list
+      // at a rate govered by m_stepTime
+      if(i == m_count){
+        // Calculate the minimum rest length for this cable.
+        // Remember that m_minLength is a percent.
+        double minRestLength = initialRL[cablesWithTags[i]->getTags()] * m_minLength * PRECISION_MILTIPLIER;
+        // If the current rest length is still greater than the minimum,
+        if( currRestLength > minRestLength ) {
+          // output a progress bar for the controller, to track when control occurs.
+          // std::cout << "." << i;
+          // Then, adjust the rest length of the actuator itself, according to
+          // m_rate and dt.
+          nextRestLength = currRestLength - (m_rate * dt * PRECISION_MILTIPLIER);
+          if(nextRestLength <= 0.0){
+            nextRestLength = minRestLength;
+          }
+        }
+      }
+      else {
+        if(currRestLength < initialRL[cablesWithTags[i]->getTags()]){
+          // Then, adjust the rest length of the actuator itself, according to
+          // m_rate and dt.
+          nextRestLength = currRestLength + (m_rate * dt * PRECISION_MILTIPLIER);
+        }
+      }
+
+      if((m_timePassed - m_previousTime) > m_stepTime){
+        m_previousTime = m_timePassed;
+        m_count++;
+        if(m_count > 5){
+          m_count = 0;
+        }
+      }
+      //DEBUGGING
+      std::cout << "Next Rest Length: " << nextRestLength/PRECISION_MILTIPLIER << "\n";
+      cablesWithTags[i]->setControlInput(nextRestLength/PRECISION_MILTIPLIER,dt);
     }
   }
 }
