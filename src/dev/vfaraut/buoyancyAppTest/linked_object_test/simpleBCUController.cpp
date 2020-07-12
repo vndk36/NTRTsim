@@ -111,10 +111,6 @@ void simpleBCUController::onSetup(TensegrityModel& subject)
     initializeActuators(subject, *it);
   }
 
-  for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
-    rigidWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
-  }
-
   std::cout << "Finished setting up the controller." << "\n";
 }
 
@@ -130,10 +126,12 @@ void simpleBCUController::onStep(TensegrityModel& subject, double dt)
     for (std::size_t i = 0; i < rigidWithTags.size(); i ++) {
         
         if(m_timeBCU > 10.0 && m_timeBCU <= 20.0){
-          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] + (dt*50.0), 0);
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] + (dt*0.10), 0);
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] + (dt*0.10), 1);
         }
         if(m_timeBCU > 30.0 && m_timeBCU <= 40.0){
-          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] - (dt*50.0), 0);
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] - (dt*0.10), 0);
+          rigidWithTags[i]->setMassBCU(rigidWithTags[i]->getMassBCU()[0] - (dt*0.10), 1);
         }
         if(m_timeBCU > 50.0){
           m_timeBCU = 0.0;

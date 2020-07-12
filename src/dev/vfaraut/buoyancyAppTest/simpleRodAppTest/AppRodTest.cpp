@@ -1,5 +1,5 @@
 /**
- * @file AppLinkedObjectTest.cpp
+ * @file AppRodTest.cpp
  * @brief Basic Testing of YAML and SB model building with functions. Simple 
  * controller as well
  * @author Victor Faraut
@@ -63,9 +63,9 @@ int main(int argc, char const *argv[])
     // create the simulation
     tgSimulation* simulation = new tgSimulation(view);
 
-    //createAndAttachedBuoyancySimulator(myModel);
-    //createAndAttachedBCUController(myModel);
-    createAndAttachedStepwiseController(myModel);
+    createAndAttachedBuoyancySimulator(myModel);
+    createAndAttachedBCUController(myModel);
+    //createAndAttachedStepwiseController(myModel);
         
 
     simulation->addModel(myModel);
@@ -113,11 +113,11 @@ void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
-  tagsToControl.push_back("alu_rod_XZ_1");
-  tagsToControl.push_back("alu_rod_YX_0");
-  tagsToControl.push_back("alu_rod_YX_1");
-  tagsToControl.push_back("alu_rod_ZY_0");
-  tagsToControl.push_back("alu_rod_ZY_1");
+  // tagsToControl.push_back("alu_rod_XZ_1");
+  // tagsToControl.push_back("alu_rod_YX_0");
+  // tagsToControl.push_back("alu_rod_YX_1");
+  // tagsToControl.push_back("alu_rod_ZY_0");
+  // tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new buoyancySimulator(waterHeight, tagsToControl);
@@ -136,11 +136,11 @@ void createAndAttachedBCUController(TensegrityModel* const myModel){
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
-  tagsToControl.push_back("alu_rod_XZ_1");
-  tagsToControl.push_back("alu_rod_YX_0");
-  tagsToControl.push_back("alu_rod_YX_1");
-  tagsToControl.push_back("alu_rod_ZY_0");
-  tagsToControl.push_back("alu_rod_ZY_1");
+  //tagsToControl.push_back("alu_rod_XZ_1");
+  //tagsToControl.push_back("alu_rod_YX_0");
+  //tagsToControl.push_back("alu_rod_YX_1");
+  //tagsToControl.push_back("alu_rod_ZY_0");
+  //tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new simpleBCUController(waterHeight, tagsToControl);

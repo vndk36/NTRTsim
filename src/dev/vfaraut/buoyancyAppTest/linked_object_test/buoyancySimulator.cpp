@@ -48,7 +48,7 @@
 #define DEBUG 0
 #define DEBUGOUTPUT 0
 
-// Constructor assigns variables, opens the debug file if DEBUGOUTPUT is on and
+// Constructor assigns variables, opens the debug file if DEBUGOUTPUT is on.
 buoyancySimulator::buoyancySimulator(float waterHeight, 
                           std::vector<std::string> tagsToControl) :
   m_tagsToControl(tagsToControl),
@@ -126,10 +126,10 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
   static double tmpBForce [2];
 
   /** Pointer to an array of two values. One for each end of the rod */
-  static double *tmpCurrMass;
+  static std::vector<double> tmpCurrMass;
 
   /** End point struct used to position information for rods */
-  static tgRod::endPoints tmpEndPointPos;
+  static tgBaseRigid::endPoints tmpEndPointPos;
 
   /** Loop that goes throught all the rod_with_tags and apply the buoyancy force */
   for (std::size_t i = 0; i < m_rodWithTags.size(); i ++) 
@@ -139,7 +139,7 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 
     //m_rodWithTags[i]->getPRigidBody()->setActivationState(DISABLE_DEACTIVATION);
 
-    tmpEndPointPos = m_rodWithTags[i]->endPointFinder();
+    tmpEndPointPos = m_rodWithTags[i]->getEndPoints();
 
     int nb_end_points = tmpEndPointPos.absolute_pos.size();
     tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*9.81)/double(nb_end_points);

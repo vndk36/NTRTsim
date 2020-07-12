@@ -1,0 +1,136 @@
+substructures:
+  rods_XZ:
+    path: ./rods_XZ.yaml
+    translation: [0, 30, 0]
+
+  rods_YX:
+    path: ./rods_YX.yaml
+    translation: [0, 30, 0]
+
+  rods_ZY:
+    path: ./rods_ZY.yaml
+    translation: [0, 30, 0]
+
+bond_groups:
+  m01:
+    rods_XZ/rods_YX/node_node:
+      - [s00, s00] # 1, 5
+  m02:
+    rods_XZ/rods_YX/node_node:
+      - [s00, s01] # 1, 6
+  m03:
+    rods_XZ/rods_YX/node_node:
+      - [s01, s10] # 2, 7
+  m04:
+    rods_XZ/rods_YX/node_node:
+      - [s01, s11] # 2, 8
+  m05:
+    rods_XZ/rods_YX/node_node:
+      - [s10, s00] # 3, 5
+  m06:
+    rods_XZ/rods_YX/node_node:
+      - [s10, s01] # 3, 6
+  m07:
+    rods_XZ/rods_YX/node_node:
+      - [s11, s10] # 4, 7
+  m08:
+    rods_XZ/rods_YX/node_node:
+      - [s11, s11] # 4, 8
+  m09:
+    rods_YX/rods_ZY/node_node:
+      - [s00, s00] # 5, 9
+  m10:
+    rods_YX/rods_ZY/node_node:
+      - [s00, s01] # 5, 10
+  m11:
+    rods_YX/rods_ZY/node_node:
+      - [s01, s10] # 6, 11
+  m12:
+    rods_YX/rods_ZY/node_node:
+      - [s01, s11] # 6, 12
+  m13:
+    rods_YX/rods_ZY/node_node:
+      - [s10, s00] # 7, 9
+  m14:
+    rods_YX/rods_ZY/node_node:
+      - [s10, s01] # 7, 10
+  m15:
+    rods_YX/rods_ZY/node_node:
+      - [s11, s10] # 8, 11
+  m16:
+    rods_YX/rods_ZY/node_node:
+      - [s11, s11] # 8, 12
+  m17:
+    rods_ZY/rods_XZ/node_node:
+      - [s00, s00] # 9, 1
+  m18:
+    rods_ZY/rods_XZ/node_node:
+      - [s00, s01] # 9, 2
+  m19:
+    rods_ZY/rods_XZ/node_node:
+      - [s01, s10] # 10, 3
+  m20:
+    rods_ZY/rods_XZ/node_node:
+      - [s01, s11] # 10, 4
+  m21:
+    rods_ZY/rods_XZ/node_node:
+      - [s10, s00] # 11, 1
+  m22:
+    rods_ZY/rods_XZ/node_node:
+      - [s10, s01] # 11, 2
+  m23:
+    rods_ZY/rods_XZ/node_node:
+      - [s11, s10] # 12, 3
+  m24:
+    rods_ZY/rods_XZ/node_node:
+      - [s11, s11] # 12, 4
+
+builders:
+  # baseString: &baseString
+  #   class: tgBasicActuatorInfo
+  #   parameters:
+  #     stiffness: 400.0
+  #     damping: 50.0
+  #     pretension: 100.0
+  #     max_tension: 1400.0
+  #     target_velocity: 1.0
+  #     min_actual_length: 0.001
+  #     min_rest_length: 0.001
+  #     history: 1
+
+  baseString: &baseString
+    class: tgBasicActuatorInfo
+    parameters:
+      stiffness: 40000.0
+      damping: 1000.0
+      pretension: 5000.0
+      max_tension: 150000.0
+      target_velocity: 12.0
+      min_actual_length: 0.001
+      min_rest_length: 0.001
+      history: 1
+
+  m01: *baseString
+  m02: *baseString
+  m03: *baseString
+  m04: *baseString
+  m05: *baseString
+  m06: *baseString
+  m07: *baseString
+  m08: *baseString
+  m09: *baseString
+  m10: *baseString
+  m11: *baseString
+  m12: *baseString
+  m13: *baseString
+  m14: *baseString
+  m15: *baseString
+  m16: *baseString
+  m17: *baseString
+  m18: *baseString
+  m19: *baseString
+  m20: *baseString
+  m21: *baseString
+  m22: *baseString
+  m23: *baseString
+  m24: *baseString

@@ -108,3 +108,23 @@ bool tgBaseRigid::invariant() const
     (m_pRigidBody != NULL) &&
     (m_mass >= 0.0);
 }
+
+void tgBaseRigid::setMassBCU(double setMass, int idx)
+{
+  if (setMass >= m_massBCUMin && setMass <= m_massBCUMax)
+  {
+    m_massBCU.at(idx) = setMass;
+  }
+  else if (setMass < m_massBCUMin)
+  {
+    m_massBCU.at(idx) = m_massBCUMin;
+  }
+  else if (setMass > m_massBCUMax)
+  {
+    m_massBCU.at(idx) = m_massBCUMax;
+  }
+  else
+  {
+    std::cout << "Cannot set this value as a Mass \n";
+  }
+}

@@ -15,7 +15,7 @@ builders:
   alu_rod_XZ_0:
     class: tgRodInfo
     parameters:
-      density: 1.100
+      density: 1.020
       radius: 0.8
       friction: 0.99
       roll_friction: 0.90
@@ -41,7 +41,7 @@ builders:
   alu_rod_XZ_1:
     class: tgRodInfo
     parameters:
-      density: 1.100
+      density: 1.020
       radius: 0.8
       friction: 0.99
       roll_friction: 0.90

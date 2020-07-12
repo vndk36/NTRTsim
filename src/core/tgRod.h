@@ -102,14 +102,6 @@ public:
      */
     double length() const { return m_length; }
 
-    /** Struct that stores the relative and absolute position of the end points  
-     */
-    struct endPoints
-    {
-        std::vector<btVector3> relative_pos;
-        std::vector<btVector3> absolute_pos;
-    };
-
     /**
      * Finds and returns the end points of the rod. It returns an endpoint struct 
      * that contains relative positions from the rod center point and absolut
@@ -119,7 +111,7 @@ public:
      * @return endpoint structure that has the relative and absolute positon of the
      * end points.
      */
-    endPoints endPointFinder (void);
+    virtual endPoints getEndPoints (void);
 
 private:
 
@@ -143,7 +135,6 @@ private:
     btMatrix3x3 m_rot;
     btVector3 m_orig1;
     btVector3 m_orig2;
-    endPoints m_endPointPos;
 };
 
 #endif

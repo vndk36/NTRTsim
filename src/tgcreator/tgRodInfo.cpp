@@ -93,6 +93,8 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     
     tgRod* rod = new tgRod(getRigidBody(), getTags(), getLength());
 
+    std::vector<double> initMasses;
+
     // volume and mass used for buoyancy computation
     const double length = getLength();
     const double radius = m_config.radius;
@@ -100,10 +102,11 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     const double volume =  M_PI * radius * radius * length;
     // change sphere volume and mass for use in the controller
     rod->setVolume(volume);
-    rod->setMassBCU(volume*density/2.0, 0);
-    rod->setMassBCU(volume*density/2.0, 1);
-    rod->setMassBCUMin(volume*density);
-    rod->setMassBCUMax(volume*density);
+    initMasses.push_back(volume*density/2.0);
+    initMasses.push_back(volume*density/2.0);
+    rod->initMassBCU(initMasses);
+    rod->setMassBCUMin((volume*density-(0.9*(volume*density)))/2.0);
+    rod->setMassBCUMax((volume*density+(0.9*(volume*density)))/2.0);
 
     return rod;
 }

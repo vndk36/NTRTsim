@@ -1,21 +1,21 @@
 nodes:
-  s00: [-5, -10, 0]
-  s01: [-5, 10, 0]
+  s00: [0, -5, -10]
+  s01: [0, -5, 10]
 
-  s10: [5, -10, 0]
-  s11: [5, 10, 0]
+  s10: [0, 5, -10]
+  s11: [0, 5, 10]
 
 pair_groups:
-  alu_rod_YX_0:
+  alu_rod_ZY_0:
     - [s00, s01]
-  alu_rod_YX_1:
+  alu_rod_ZY_1:
     - [s10, s11]
 
 builders:
-  alu_rod_YX_0:
+  alu_rod_ZY_0:
     class: tgRodInfo
     parameters:
-      density: 1.100
+      density: 1.020
       radius: 0.8
       friction: 0.99
       roll_friction: 0.90
@@ -38,10 +38,10 @@ builders:
       roll_friction: 0.9
       restitution: 0.0
 
-  alu_rod_YX_1:
+  alu_rod_ZY_1:
     class: tgRodInfo
     parameters:
-      density: 1.100
+      density: 1.020
       radius: 0.8
       friction: 0.99
       roll_friction: 0.90

@@ -84,6 +84,10 @@ public:
      */
     virtual btVector3 orientation() const;
 
+    /**
+     * All methods for buoyancy simulation
+     */
+
     virtual double getVolume(void)
     {
         return m_volume;
@@ -93,15 +97,22 @@ public:
         m_volume = setVolume;
     }
 
-    virtual double* getMassBCU(void)
+    virtual std::vector<double> getMassBCU(void)
     {
         return m_massBCU;
     }
 
-    virtual void setMassBCU(double setMass, int idx)
+    virtual void setMassBCU(double setMass, int idx);
+
+    virtual void initMassBCU(std::vector<double> initMasses)
     {
-        m_massBCU[idx] = setMass;
+        for (std::size_t i = 0; i < initMasses.size(); i ++)
+        {
+            m_massBCU.push_back(initMasses.at(i));
+        }
+        
     }
+
     virtual double getMassBCUMin(void)
     {
         return m_massBCUMin;
@@ -111,6 +122,7 @@ public:
     {
         m_massBCUMin = setMass;
     }
+
     virtual double getMassBCUMax(void)
     {
         return m_massBCUMax;
@@ -121,22 +133,38 @@ public:
         m_massBCUMax = setMass;
     }
 
+    /** 
+     * Struct that stores the relative and absolute position of the end points.  
+     * Used for buoyancy simulator
+     */
+    struct endPoints
+    {
+        std::vector<btVector3> relative_pos;
+        std::vector<btVector3> absolute_pos;
+    };
+
+    /**
+     * Finds and returns the end points of on object. It returns an endpoint struct 
+     * that contains relative positions from the center of gravity and absolut
+     * positions from the world referneces. 
+     * NEEDS to be redefined for each geometric shapes
+     *
+     * @param[in] void.
+     * @return endpoint structure that has the relative and absolute positon of the
+     * end points.
+     */
+    virtual endPoints getEndPoints (void)
+    {
+        return m_endPointPos;
+    }
+
 protected:
-	// Virtual base class
+
+    /** Virtual base class */
 	tgBaseRigid(btRigidBody* pRigidBody,
 		const tgTags& tags);
 
-private:
-
-    /** Integrity predicate. */
-    bool invariant() const;
-
-
-protected:
-    
-    /**
-     * The Bullet Physics implementation of the rod.
-     */
+    /** The Bullet Physics implementation of the rod. */
     btRigidBody* m_pRigidBody;
 
     /**
@@ -149,11 +177,21 @@ protected:
     
     /** The rod's mass. The units are application dependent. */
     const double m_mass;
-
+    
+    /** All the varibale needed for the Buoyancy simulation. */ 
     double m_volume;
-    double m_massBCU [2];
-    double m_massBCUMin;
-    double m_massBCUMax;
+    std::vector<double> m_massBCU;  // Masses used by the BCU for each endpoint
+    double m_massBCUMin;            // Min value that the BCU can have
+    double m_massBCUMax;            // Max value that the BCU can have
+    
+    endPoints m_endPointPos;
+
+private:
+
+    /** Integrity predicate. */
+    bool invariant() const;
+
+
 };
 
 #endif

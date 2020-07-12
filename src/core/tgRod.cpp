@@ -112,7 +112,7 @@ bool tgRod::invariant() const
  * @return endpoint structure that has the relative and absolute positon of the
  * end points.
  */
-tgRod::endPoints tgRod::endPointFinder (void)
+tgBaseRigid::endPoints tgRod::getEndPoints (void)
 {
 
   m_com = btVector3(centerOfMass().x(), centerOfMass().y(), centerOfMass().z());
