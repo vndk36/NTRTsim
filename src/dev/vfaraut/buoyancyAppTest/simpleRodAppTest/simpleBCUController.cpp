@@ -45,7 +45,7 @@
 #define DEBUGOUTPUT 0
 
 // Forward declaration
-void setMassRodSides(tgRod* p_rodTags, std::vector<double> mass);
+//void setMassRodSides(tgRod* p_rodTags, double* mass);
 
 
 // Constructor assigns variables, does some simple sanity checks.
@@ -134,12 +134,14 @@ void simpleBCUController::onStep(TensegrityModel& subject, double dt)
         if(m_timeBCU > 0.0 && m_timeBCU <= 10.0){
           m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*0.10));
           m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*0.10));
-          setMassRodSides(p_rigidWithTags.at(i), m_mass);
+          p_rigidWithTags[i]->setMassBCU(m_mass[0], 0);
+          p_rigidWithTags[i]->setMassBCU(m_mass[1], 1);
         }
         if(m_timeBCU > 20.0 && m_timeBCU <= 30.0){
           m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*0.10));
           m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*0.10));
-          setMassRodSides(p_rigidWithTags.at(i), m_mass);
+          p_rigidWithTags[i]->setMassBCU(m_mass[0], 0);
+          p_rigidWithTags[i]->setMassBCU(m_mass[1], 1);
 
         }
         if(m_timeBCU > 40.0){
@@ -154,30 +156,30 @@ void simpleBCUController::onStep(TensegrityModel& subject, double dt)
     }
   }
 }
-void setMassRodSides(tgRod* p_rodTags, std::vector<double> mass)
-{
-  std::cout << mass.size() << " \n";
-  for (std::size_t i = 0; i < mass.size(); i ++)
-  {
-    if (mass.at(i) >= p_rodTags->getMassBCUMin())
-    {
-      if (mass.at(i) <= p_rodTags->getMassBCUMax())
-      {
-        //std::cout << "Value set " << mass[i] << "\n";
-        p_rodTags->setMassBCU(mass.at(i),i);
-      }
-      else
-      {
-        //std::cout << "Max value reached " << mass[i] << "\n";
-        p_rodTags->setMassBCU(p_rodTags->getMassBCUMax(),i);
+// void setMassRodSides(tgRod* p_rodTags, double* mass)
+// {
+//   std::cout << " 2 \n";
+//   for (std::size_t i = 0; i < 2; i ++)
+//   {
+//     if (mass[i] >= p_rodTags->getMassBCUMin())
+//     {
+//       if (mass[i] <= p_rodTags->getMassBCUMax())
+//       {
+//         //std::cout << "Value set " << mass[i] << "\n";
+//         p_rodTags->setMassBCU(mass[i],i);
+//       }
+//       else
+//       {
+//         //std::cout << "Max value reached " << mass[i] << "\n";
+//         p_rodTags->setMassBCU(p_rodTags->getMassBCUMax(),i);
 
-      }
+//       }
       
-    }
-    else
-    {
-      //std::cout << "Min value reached " << mass[i] << "\n";
-      p_rodTags->setMassBCU(p_rodTags->getMassBCUMin(),i);
-    }
-  }
-}
+//     }
+//     else
+//     {
+//       //std::cout << "Min value reached " << mass[i] << "\n";
+//       p_rodTags->setMassBCU(p_rodTags->getMassBCUMin(),i);
+//     }
+//   }
+// }

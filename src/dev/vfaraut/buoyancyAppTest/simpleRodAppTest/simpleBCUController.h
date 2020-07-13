@@ -113,6 +113,8 @@ private:
   float m_waterHeight;
 
   std::vector<double> m_mass;
+  //double m_mass [2];
+
   
   /**
    * A list of all the actuators to control. This is populated in onSetup

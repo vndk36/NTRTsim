@@ -84,8 +84,9 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     // @todo: check to make sure the rigidBody has been built
     // @todo: Do we need to use the group here?
 
-    // Just in case it hasn't been done already...
+    // Just in case it hasn't been done already..
     initRigidBody(world); 
+    
     
     #if (0)
     std::cout << "creating rod with tags " << getTags() << std::endl; 
@@ -102,11 +103,19 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     const double volume =  M_PI * radius * radius * length;
     // change sphere volume and mass for use in the controller
     rod->setVolume(volume);
-    initMasses.push_back(volume*density/2.0);
-    initMasses.push_back(volume*density/2.0);
-    rod->initMassBCU(initMasses);
+    
+    //rod->setMassBCU(volume*density/2.0, 0);
+    //rod->setMassBCU(volume*density/2.0, 1);
+
     rod->setMassBCUMin((volume*density-(0.9*(volume*density)))/2.0);
     rod->setMassBCUMax((volume*density+(0.9*(volume*density)))/2.0);
+    
+    initMasses.push_back(volume*density/2.0);
+    initMasses.push_back(volume*density/2.0);
+    std::cout << initMasses.size() << " test \n";
+    rod->initMassBCU(initMasses);
+/*     rod->setMassBCU(volume*density/2.0, 0);
+    rod->setMassBCU(volume*density/2.0, 1); */
 
     return rod;
 }

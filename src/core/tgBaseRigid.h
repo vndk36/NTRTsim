@@ -102,16 +102,22 @@ public:
         return m_massBCU;
     }
 
+    /* virtual double* getMassBCU(void)
+    {
+        return m_massBCU;
+    } */
+
     virtual void setMassBCU(double setMass, int idx);
 
     virtual void initMassBCU(std::vector<double> initMasses)
     {
+        std::cout << "test \n";
         m_massBCU.clear();
+        std::cout << "test \n";
         for (std::size_t i = 0; i < initMasses.size(); i ++)
         {
             m_massBCU.push_back(initMasses.at(i));
         }
-        
     }
 
     virtual double getMassBCUMin(void)

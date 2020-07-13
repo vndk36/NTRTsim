@@ -139,6 +139,7 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 
     /** Pointer to an array of two values. One for each end of the rod */
     std::vector<double> tmpCurrMass = m_rodWithTags[i]->getMassBCU();
+    //static double *tmpCurrMass = m_rodWithTags[i]->getMassBCU();
 
     int nb_end_points = tmpEndPointPos.absolute_pos.size();
     tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*9.81)/double(nb_end_points);

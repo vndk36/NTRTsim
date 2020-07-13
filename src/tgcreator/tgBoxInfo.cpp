@@ -93,6 +93,8 @@ tgModel* tgBoxInfo::createModel(tgWorld& world)
     #endif
     
     tgBox* box = new tgBox(getRigidBody(), getTags(), getLength());
+
+    std::vector<double> initMasses;
     
     // volume and mass used for buoyancy computation
     const double length = getLength();
@@ -102,7 +104,9 @@ tgModel* tgBoxInfo::createModel(tgWorld& world)
     const double volume =  length * (width*2) * (height*2);
     // change sphere volume and mass for use in the controller
     box->setVolume(volume);
-    box->setMassBCU(volume*density, 0);
+    // Set one value for mass control on the buoyancy simulator
+    initMasses.push_back(volume*density);
+    box->initMassBCU(initMasses);
     box->setMassBCUMin(volume*density);
     box->setMassBCUMax(volume*density);
 
