@@ -20,7 +20,6 @@ builders:
       friction: 0.99
       roll_friction: 0.90
       restitution: 0.0
-
   s00:
     class: tgSphereInfo
     parameters:

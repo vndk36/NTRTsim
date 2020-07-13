@@ -106,6 +106,7 @@ public:
 
     virtual void initMassBCU(std::vector<double> initMasses)
     {
+        m_massBCU.clear();
         for (std::size_t i = 0; i < initMasses.size(); i ++)
         {
             m_massBCU.push_back(initMasses.at(i));
