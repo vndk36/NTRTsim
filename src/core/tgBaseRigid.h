@@ -102,18 +102,26 @@ public:
         return m_massBCU;
     }
 
-    /* virtual double* getMassBCU(void)
-    {
-        return m_massBCU;
-    } */
-
+    /**
+     * Set a Mass value for the BCU at a specific location
+     *
+     * @param[in] setMass is the value that will be input in the mass vector.
+     * @param[in] idx is the index where this value will be set
+     * @return void.
+     */
     virtual void setMassBCU(double setMass, int idx);
 
+
+    /**
+     * Initiate the Mass vector with all the value passed to it.
+     *
+     * @param[in] initMasses is a std::vector<double> that contains the number 
+     *            of mass value that you want in you rigid body.
+     * @return void.
+     */
     virtual void initMassBCU(std::vector<double> initMasses)
     {
-        std::cout << "test \n";
         m_massBCU.clear();
-        std::cout << "test \n";
         for (std::size_t i = 0; i < initMasses.size(); i ++)
         {
             m_massBCU.push_back(initMasses.at(i));

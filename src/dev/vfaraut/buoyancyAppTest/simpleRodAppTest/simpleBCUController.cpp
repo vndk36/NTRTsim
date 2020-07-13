@@ -44,17 +44,12 @@
 #define DEBUG 0
 #define DEBUGOUTPUT 0
 
-// Forward declaration
-//void setMassRodSides(tgRod* p_rodTags, double* mass);
-
 
 // Constructor assigns variables, does some simple sanity checks.
 // Also, initializes the accumulator variable timePassed so that it can
 // be incremented in onStep.
-simpleBCUController::simpleBCUController(float waterHeight, 
-                          std::vector<std::string> tagsToControl) :
+simpleBCUController::simpleBCUController(std::vector<std::string> tagsToControl) :
   m_tagsToControl(tagsToControl),
-  m_waterHeight(waterHeight),
   m_timePassed(0.0),
 	m_count(0)
 { 
@@ -156,30 +151,3 @@ void simpleBCUController::onStep(TensegrityModel& subject, double dt)
     }
   }
 }
-// void setMassRodSides(tgRod* p_rodTags, double* mass)
-// {
-//   std::cout << " 2 \n";
-//   for (std::size_t i = 0; i < 2; i ++)
-//   {
-//     if (mass[i] >= p_rodTags->getMassBCUMin())
-//     {
-//       if (mass[i] <= p_rodTags->getMassBCUMax())
-//       {
-//         //std::cout << "Value set " << mass[i] << "\n";
-//         p_rodTags->setMassBCU(mass[i],i);
-//       }
-//       else
-//       {
-//         //std::cout << "Max value reached " << mass[i] << "\n";
-//         p_rodTags->setMassBCU(p_rodTags->getMassBCUMax(),i);
-
-//       }
-      
-//     }
-//     else
-//     {
-//       //std::cout << "Min value reached " << mass[i] << "\n";
-//       p_rodTags->setMassBCU(p_rodTags->getMassBCUMin(),i);
-//     }
-//   }
-// }

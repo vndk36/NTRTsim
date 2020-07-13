@@ -144,8 +144,6 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
     int nb_end_points = tmpEndPointPos.absolute_pos.size();
     tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*9.81)/double(nb_end_points);
 
-    std::cout << "One Step \n";
-
     for (std::size_t j = 0; j < nb_end_points; j ++)
     {
       /** 
@@ -155,9 +153,6 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
        */
       m_currentWaterDepthPos1 = -(tmpEndPointPos.absolute_pos[j].getY()-m_waterHeight);
       tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*98.1)/double(nb_end_points);
-      //tmpCurrMass = m_rodWithTags[i]->getMassBCU();
-      std::cout << "mass is " << m_rodWithTags[i]->mass() << " BCU mass is " << tmpCurrMass[0] << "\n";
-      std::cout << "mass is " << m_rodWithTags[i]->mass() << " BCU mass is " << tmpCurrMass[1] << "\n";
 
       if(m_currentWaterDepthPos1 > 0.0){
       tmpBForce[1] = tmpBForce[0] + (m_rodWithTags[i]->mass()-tmpCurrMass[j]);
@@ -167,6 +162,11 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 
       if(DEBUG)
       {
+        for (std::size_t z = 0; z < tmpCurrMass.size(); z ++)
+        {
+          std::cout << "mass is " << m_rodWithTags[i]->mass() << " BCU mass is " << tmpCurrMass[z] << "\n";
+
+        }
         std::cout << "Controller step Force will be applied to " << 
                       m_tagsToControl[i] << std::endl;
         std::cout << m_tagsToControl[i] <<

@@ -69,7 +69,7 @@ public:
    * cables upon which to act. All the cables which have a tag in this list of tags
    * will be acted upon by this controller.
    */
-  simpleBCUController(float waterHeight, std::vector<std::string> tagsToControl);
+  simpleBCUController(std::vector<std::string> tagsToControl);
 
   /**
    * Nothing to delete, destructor must be virtual
@@ -110,11 +110,8 @@ private:
   double m_timeBCU = 0.0;
   double m_previousTime;
   int m_count;
-  float m_waterHeight;
 
   std::vector<double> m_mass;
-  //double m_mass [2];
-
   
   /**
    * A list of all the actuators to control. This is populated in onSetup

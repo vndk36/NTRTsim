@@ -113,11 +113,11 @@ void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
-  // tagsToControl.push_back("alu_rod_XZ_1");
-  // tagsToControl.push_back("alu_rod_YX_0");
-  // tagsToControl.push_back("alu_rod_YX_1");
-  // tagsToControl.push_back("alu_rod_ZY_0");
-  // tagsToControl.push_back("alu_rod_ZY_1");
+  tagsToControl.push_back("alu_rod_XZ_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_1");
+  tagsToControl.push_back("alu_rod_ZY_0");
+  tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new buoyancySimulator(waterHeight, tagsToControl);
@@ -132,18 +132,17 @@ void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
  * @param[in] Model that you want your buoyancy simulator to be attached to
  */
 void createAndAttachedBCUController(TensegrityModel* const myModel){
-  float waterHeight = 10.0;
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
-  //tagsToControl.push_back("alu_rod_XZ_1");
-  //tagsToControl.push_back("alu_rod_YX_0");
-  //tagsToControl.push_back("alu_rod_YX_1");
-  //tagsToControl.push_back("alu_rod_ZY_0");
-  //tagsToControl.push_back("alu_rod_ZY_1");
+  tagsToControl.push_back("alu_rod_XZ_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_1");
+  tagsToControl.push_back("alu_rod_ZY_0");
+  tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
-    new simpleBCUController(waterHeight, tagsToControl);
+    new simpleBCUController(tagsToControl);
 
   myModel->attach(controller);
 

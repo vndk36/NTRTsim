@@ -8,14 +8,14 @@ nodes:
 pair_groups:
   alu_rod_XZ_0:
     - [s00, s01]
-  # alu_rod_XZ_1:
-  #   - [s10, s11]
+  alu_rod_XZ_1:
+    - [s10, s11]
 
 builders:
   alu_rod_XZ_0:
     class: tgRodInfo
     parameters:
-      density: 1.035
+      density: 1.0355
       radius: 0.08
       friction: 0.99
       roll_friction: 0.90
@@ -37,28 +37,28 @@ builders:
       roll_friction: 0.9
       restitution: 0.0
 
-  # alu_rod_XZ_1:
-  #   class: tgRodInfo
-  #   parameters:
-  #     density: 1.035
-  #     radius: 0.08
-  #     friction: 0.99
-  #     roll_friction: 0.90
-  #     restitution: 0.0
+  alu_rod_XZ_1:
+    class: tgRodInfo
+    parameters:
+      density: 1.0355
+      radius: 0.08
+      friction: 0.99
+      roll_friction: 0.90
+      restitution: 0.0
 
-  # s10:
-  #   class: tgSphereInfo
-  #   parameters:
-  #     density: 0
-  #     radius: 0.08
-  #     friction: 0.99
-  #     roll_friction: 0.9
-  #     restitution: 0.0
-  # s11:
-  #   class: tgSphereInfo
-  #   parameters:
-  #     density: 0
-  #     radius: 0.08
-  #     friction: 0.99
-  #     roll_friction: 0.9
-  #     restitution: 0.0
+  s10:
+    class: tgSphereInfo
+    parameters:
+      density: 0
+      radius: 0.08
+      friction: 0.99
+      roll_friction: 0.9
+      restitution: 0.0
+  s11:
+    class: tgSphereInfo
+    parameters:
+      density: 0
+      radius: 0.08
+      friction: 0.99
+      roll_friction: 0.9
+      restitution: 0.0
