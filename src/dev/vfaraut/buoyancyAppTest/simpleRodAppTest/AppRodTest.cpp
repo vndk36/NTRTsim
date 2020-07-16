@@ -12,6 +12,7 @@
 //include controller
 #include "buoyancySimulator.h"
 #include "simpleBCUController.h"
+#include "rotBCUController.h"
 #include "StepwiseController.h"
 // This library
 #include "core/terrain/tgBoxGround.h"
@@ -31,6 +32,7 @@
 TensegrityModel* createModel(char const *userModelPath);
 void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel);
 void createAndAttachedBCUController(TensegrityModel* const myModel);
+void createAndAttachedRotBCUController(TensegrityModel* const myModel);
 void createAndAttachedStepwiseController(TensegrityModel* const myModel);
 
 /**
@@ -64,7 +66,8 @@ int main(int argc, char const *argv[])
     tgSimulation* simulation = new tgSimulation(view);
 
     createAndAttachedBuoyancySimulator(myModel);
-    createAndAttachedBCUController(myModel);
+    //createAndAttachedBCUController(myModel);
+    createAndAttachedRotBCUController(myModel);
     //createAndAttachedStepwiseController(myModel);
         
 
@@ -134,15 +137,40 @@ void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
 void createAndAttachedBCUController(TensegrityModel* const myModel){
   std::vector<std::string> tagsToControl;
 
-  tagsToControl.push_back("alu_rod_XZ_0");
-  tagsToControl.push_back("alu_rod_XZ_1");
-  tagsToControl.push_back("alu_rod_YX_0");
-  tagsToControl.push_back("alu_rod_YX_1");
+  // tagsToControl.push_back("alu_rod_XZ_0");
+  // tagsToControl.push_back("alu_rod_XZ_1");
+  // tagsToControl.push_back("alu_rod_YX_0");
+  // tagsToControl.push_back("alu_rod_YX_1");
   tagsToControl.push_back("alu_rod_ZY_0");
   tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new simpleBCUController(tagsToControl);
+
+  myModel->attach(controller);
+
+  return;
+}
+
+/**
+ * Creats the buoyancy simulator for rod and attached it to a model
+ * @param[in] Model that you want your buoyancy simulator to be attached to
+ */
+void createAndAttachedRotBCUController(TensegrityModel* const myModel){
+  std::vector<std::string> tagsToControl;
+
+  tagsToControl.push_back("alu_rod_ZY_0");
+  tagsToControl.push_back("alu_rod_ZY_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_1");
+
+  tagsToControl.push_back("alu_rod_YX_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_XZ_0");
+  tagsToControl.push_back("alu_rod_XZ_1");
+
+  tgObserver<TensegrityModel>* const controller = 
+    new rotBCUController(tagsToControl);
 
   myModel->attach(controller);
 

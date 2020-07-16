@@ -107,8 +107,8 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     //rod->setMassBCU(volume*density/2.0, 0);
     //rod->setMassBCU(volume*density/2.0, 1);
 
-    rod->setMassBCUMin((volume*density-(0.9*(volume*density)))/2.0);
-    rod->setMassBCUMax((volume*density+(0.9*(volume*density)))/2.0);
+    rod->setMassBCUMin((volume*density-(0.1*(volume*density)))/2.0);
+    rod->setMassBCUMax((volume*density+(0.1*(volume*density)))/2.0);
     
     initMasses.push_back(volume*density/2.0);
     initMasses.push_back(volume*density/2.0);

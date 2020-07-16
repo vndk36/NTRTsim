@@ -15,6 +15,7 @@ link_libraries(	core
 add_executable(	AppRodTest
 				AppRodTest.cpp
 				simpleBCUController.cpp
+				rotBCUController.cpp
 				buoyancySimulator.cpp
 				StepwiseController.cpp
 				)

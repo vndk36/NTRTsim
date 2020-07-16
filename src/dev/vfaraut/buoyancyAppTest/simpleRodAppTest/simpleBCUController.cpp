@@ -121,7 +121,7 @@ void simpleBCUController::onStep(TensegrityModel& subject, double dt)
   // For each cable, check if its rest length is past the minimum,
   // otherwise adjust its length according to m_rate and dt.
 
-  if( m_timePassed > 0.0 ) {
+  if( m_timePassed > 10.0 ) {
     
     for (std::size_t i = 0; i < p_rigidWithTags.size(); i ++) {
         m_mass.clear();
