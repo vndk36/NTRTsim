@@ -41,9 +41,8 @@
 #include "helpers/FileHelpers.h"
 #include <stdexcept>
 
-#define DEBUG 0
-#define DEBUGOUTPUT 0
-
+#define DEBUG         0
+#define DEBUGOUTPUT   0
 
 // Constructor assigns variables, does some simple sanity checks.
 // Also, initializes the accumulator variable timePassed so that it can
@@ -120,205 +119,81 @@ void rotBCUController::onStep(TensegrityModel& subject, double dt)
   // For each cable, check if its rest length is past the minimum,
   // otherwise adjust its length according to m_rate and dt.
 
+  //std::cout << "Dt for this step " << dt << "\n" <<
+  //          "Case " << m_count << "\n";
+
   const double rate = 0.1;
 
-  if( m_timePassed > 0.0 ) {
 
-    if(m_timeBCU < 10.0){
-      for (int i = 0; i < 4; i ++) {
-        m_mass.clear();
-
-        if (i < 1){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 2){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 4){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
+  if( m_timePassed > START_TIME) {
+    for(int i = 0; i<NB_CONTROLLABLE; i++)
+    {
+      setMassForOneRigid (i, dt);
     }
-    else if(m_timeBCU < 20.0){
-      for (int i = 0; i < 4; i ++) {
-        m_mass.clear();
-
-        if (i < 1){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 2){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 4){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else if(m_timeBCU < 30.0){
-      for (int i = 4; i < 8; i ++) {
-        m_mass.clear();
-
-        if (i < 5){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 6){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 8){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else if(m_timeBCU < 40.0){
-      for (int i = 4; i < 8; i ++) {
-        m_mass.clear();
-
-        if (i < 5){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 6){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 8){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else if(m_timeBCU < 50.0){
-      for (int i = 0; i < 4; i ++) {
-        m_mass.clear();
-
-        if (i < 1){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 2){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 4){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else if(m_timeBCU < 60.0){
-      for (int i = 0; i < 4; i ++) {
-        m_mass.clear();
-
-        if (i < 1){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 2){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 4){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else if(m_timeBCU < 70.0){
-      for (int i = 4; i < 8; i ++) {
-        m_mass.clear();
-
-        if (i < 5){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 6){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 8){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else if(m_timeBCU < 80.0){
-      for (int i = 4; i < 8; i ++) {
-        m_mass.clear();
-
-        if (i < 5){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] + (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 6){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] - (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-        else if (i < 8){
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[0] + (dt*rate));
-          m_mass.push_back(p_rigidWithTags.at(i)->getMassBCU()[1] - (dt*rate));
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[0], 0);
-          p_rigidWithTags.at(i)->setMassBCU(m_mass[1], 1);
-        }
-      }
-    }
-    else{
+      
+    if(m_timeBCU > DELTA_T_CASE)
+    {
+      m_count ++;
+      if(m_count >= NB_CASE)
+        m_count = 0;
       m_timeBCU = 0.0;
     }
+
     m_timeBCU += dt;
   }
+}
+
+void rotBCUController::setMassForOneRigid (int rigidIdx, double dt)
+{
+  int tmpCase = 0;
+
+  tmpCase = m_ctrlMatrix[m_count][rigidIdx];
+
+  m_mass.clear();
+
+  switch (tmpCase)
+  {
+  case 0:
+    /* Do nothing */
+    break;
+
+  case 1:
+    /* Increase both sides */
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] + (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] + (dt*RATE));
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
+    break;
+
+  case 2:
+    /* Decrease both sides */
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] - (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] - (dt*RATE));
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
+    break;
+
+  case 3:
+    /* increase side 0 and decrease side 1 */
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] + (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] - (dt*RATE));
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
+    break;
+
+  case 4:
+    /* increase side 1 and decrease side 0  */
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] - (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] + (dt*RATE));
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
+    p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
+    break;
+  default:
+    break;
+  }
+
+
+  //std::cout<< "Mass set for "<<rigidIdx<< " with the case " << tmpCase << "\n"<<
+  //          "Mass A = "<< m_mass[0] << "   Mass B = " << m_mass[1] << "\n";
+
 }

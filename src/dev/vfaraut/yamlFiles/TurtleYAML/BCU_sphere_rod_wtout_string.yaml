@@ -1,0 +1,13 @@
+substructures:
+  rods_XZ:
+    path: ./rods_XZ.yaml
+    translation: [0, 10, 0]
+
+  rods_YX:
+    path: ./rods_YX.yaml
+    translation: [0, 10, 0]
+
+  rods_ZY:
+    path: ./rods_ZY.yaml
+    translation: [0, 10, 0]
+

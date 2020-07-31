@@ -42,7 +42,13 @@
 #include <map>
 #include <fstream>
 
-#define NB_ROD_SIDES 2
+#define NB_ROD_SIDES    2
+#define NB_CASE         4
+#define NB_CONTROLLABLE 6
+
+#define RATE            0.1
+#define START_TIME      0.0
+#define DELTA_T_CASE    20.0
 
 // Forward declarations
 class TensegrityModel;
@@ -96,6 +102,8 @@ protected:
 
 void initializeActuators(TensegrityModel& subject, std::string tag);
 
+void setMassForOneRigid (int rigidIdx, double dt);
+
 
 private:
   /**
@@ -118,6 +126,35 @@ private:
    * by using m_tagsToControl.
    */
   std::vector<tgBaseRigid*> p_rigidWithTags;
+
+  /* const int m_ctrlMatrix [NB_CASE][NB_CONTROLLABLE] = {
+                                  {0, 0, 2, 1, 3, 3},   // case 2
+                                  {0, 0, 1, 2, 4, 4},   // case 3
+                                  {2, 1, 4, 4, 0, 0},   // case 4
+                                  {1, 2, 3, 3, 0, 0},   // case 5
+                                  {0, 0, 1, 2, 4, 4},   // case 6
+                                  {0, 0, 2, 1, 3, 3},   // case 7
+                                  {1, 2, 3, 3, 0, 0},   // case 0
+                                  {2, 1, 4, 4, 0, 0},   // case 1
+                                }; */
+
+  /* const int m_ctrlMatrix [NB_CASE][NB_CONTROLLABLE] = {
+                                  {0, 0, 2, 1, 3, 3},   // case 2
+                                  {2, 1, 1, 2, 4, 4},   // case 3
+                                  {2, 1, 4, 4, 0, 0},   // case 4
+                                  {1, 2, 3, 3, 4, 4},   // case 5
+                                  {0, 0, 1, 2, 4, 4},   // case 6
+                                  {1, 2, 2, 1, 3, 3},   // case 7
+                                  {1, 2, 3, 3, 0, 0},   // case 0
+                                  {2, 1, 4, 4, 3, 3},   // case 1
+                                }; */
+
+  const int m_ctrlMatrix [NB_CASE][NB_CONTROLLABLE] = {
+                                  {3, 3, 2, 1, 1, 2},   // case 0
+                                  {3, 3, 4, 4, 2, 1},   // case 1
+                                  {4, 4, 1, 2, 1, 2},   // case 2
+                                  {4, 4, 3, 3, 2, 1},   // case 3
+                                };
 
 
   // file pointer 

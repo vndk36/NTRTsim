@@ -139,10 +139,10 @@ void createAndAttachedBCUController(TensegrityModel* const myModel){
 
   // tagsToControl.push_back("alu_rod_XZ_0");
   // tagsToControl.push_back("alu_rod_XZ_1");
-  // tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_0");
   // tagsToControl.push_back("alu_rod_YX_1");
-  tagsToControl.push_back("alu_rod_ZY_0");
-  tagsToControl.push_back("alu_rod_ZY_1");
+  //tagsToControl.push_back("alu_rod_ZY_0");
+  //tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new simpleBCUController(tagsToControl);
@@ -159,15 +159,12 @@ void createAndAttachedBCUController(TensegrityModel* const myModel){
 void createAndAttachedRotBCUController(TensegrityModel* const myModel){
   std::vector<std::string> tagsToControl;
 
-  tagsToControl.push_back("alu_rod_ZY_0");
-  tagsToControl.push_back("alu_rod_ZY_1");
-  tagsToControl.push_back("alu_rod_YX_0");
-  tagsToControl.push_back("alu_rod_YX_1");
-
-  tagsToControl.push_back("alu_rod_YX_1");
-  tagsToControl.push_back("alu_rod_YX_0");
   tagsToControl.push_back("alu_rod_XZ_0");
   tagsToControl.push_back("alu_rod_XZ_1");
+  tagsToControl.push_back("alu_rod_YX_0");
+  tagsToControl.push_back("alu_rod_YX_1");
+  tagsToControl.push_back("alu_rod_ZY_0");
+  tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
     new rotBCUController(tagsToControl);

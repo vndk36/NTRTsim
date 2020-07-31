@@ -174,8 +174,8 @@ void tgRod::main_axis_setup(void)
       inv_inertial.getY() > inv_inertial.getZ())
   {
     std::cout << "Y"<< "\n";
-    m_orig1 = btVector3(0.0, (m_length/2.0), 0.0);
-    m_orig2 = btVector3(0.0, -(m_length/2.0), 0.0);
+    m_orig1 = btVector3(0.0, -(m_length/2.0), 0.0);
+    m_orig2 = btVector3(0.0, (m_length/2.0), 0.0);
   }
 
   if( inv_inertial.getZ() > inv_inertial.getX() && 
