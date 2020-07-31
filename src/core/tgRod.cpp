@@ -70,8 +70,6 @@ tgRod::tgRod(btRigidBody* pRigidBody,
   {
           throw std::invalid_argument("Pointer to btRigidBody is NULL");
   }
-  // Use inertia matrix to know what is the "main" axis of the rod
-  main_axis_setup();
 
   // Postcondition
   assert(invariant());
@@ -146,21 +144,27 @@ tgBaseRigid::endPoints tgRod::getEndPoints (void)
   return m_endPointPos;
 }
 
+
 /** 
- * Use the inertia to know the main "orientation" of the rod. This is used to 
- * compute the end points of the rod used in Buoyancy simulation. The rod 
- * needs to be constructed on one of the main axis (x,y or z) only. 
- * @param[in] void.
+ * Use the to starting node position (From and To) to compute the main axis of
+ * the rod. 
+ * @param[in] from and to which are btVector3 from the pair of node used to 
+ * construct the rod.
  * @return void.
  */
-void tgRod::main_axis_setup(void)
+void tgRod::mainAxisSetup(btVector3 from, btVector3 to)
 {
-  /**
+  
+  m_orig1 = from-(from-((from - to)/2.0));
+  m_orig2 = to-(from-((from-to)/2.0));
+
+
+/**
    * As we get the inverted inertia diag, the "main" axis is the axis with the 
    * biggest value. As the rod is a cylindre, both of the other values should 
    * be identitcal
    */
-  btVector3 inv_inertial = getPRigidBody()->getInvInertiaDiagLocal();
+  /* btVector3 inv_inertial = getPRigidBody()->getInvInertiaDiagLocal();
 
   if( inv_inertial.getX() > inv_inertial.getY() && 
       inv_inertial.getX() > inv_inertial.getZ())
@@ -184,5 +188,5 @@ void tgRod::main_axis_setup(void)
     std::cout << "Z"<< "\n";
     m_orig1 = btVector3(0.0, 0.0, (m_length/2.0));
     m_orig2 = btVector3(0.0, 0.0, -(m_length/2.0));
-  } 
+  }  */
 }

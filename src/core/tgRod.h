@@ -113,16 +113,16 @@ public:
      */
     virtual endPoints getEndPoints (void);
 
-private:
-
     /** 
-     * Use the inertia to know the main "orientation" of the rod. This is used to 
-     * compute the end points of the rod used in Buoyancy simulation. The rod 
-     * needs to be constructed on one of the main axis (x,y or z) only. 
-     * @param[in] void.
+     * Use the to starting node position (From and To) to compute the main axis of
+     * the rod. 
+     * @param[in] from and to which are btVector3 from the pair of node used to 
+     * construct the rod.
      * @return void.
      */
-    void main_axis_setup(void);
+    void mainAxisSetup(btVector3 from, btVector3 to);
+
+private:
 
     /** Integrity predicate. */
     bool invariant() const;

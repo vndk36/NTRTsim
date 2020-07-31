@@ -94,6 +94,9 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     
     tgRod* rod = new tgRod(getRigidBody(), getTags(), getLength());
 
+    // Setup of the main axis of the rod to compute the endpoints later on.
+    rod->mainAxisSetup(getFrom(), getTo());
+
     std::vector<double> initMasses;
 
     // volume and mass used for buoyancy computation
