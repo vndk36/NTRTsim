@@ -82,7 +82,7 @@ void simpleBCUController::initializeActuators(TensegrityModel& subject,
   //DEBUGGING
   std::cout << "Finding rigidBodies with the tag: " << tag << "\n";
   // Pick out the actuators with the specified tag
-  std::vector<tgRod*> p_foundRigidBodies = subject.find<tgRod>(tag);
+  std::vector<tgBaseRigid*> p_foundRigidBodies = subject.find<tgBaseRigid>(tag);
   std::cout << "The following rigidBodies were found and will have forces " 
             "applied to them be controlled: "
 	        << std::endl;

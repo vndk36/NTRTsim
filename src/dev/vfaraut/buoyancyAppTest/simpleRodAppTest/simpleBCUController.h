@@ -30,7 +30,7 @@
 #include "core/tgObserver.h"
 #include "core/tgTags.h"
 #include "core/tgBaseRigid.h" 
-#include "core/tgRod.h"
+#include "core/tgBaseRigid.h"
 
 //Bullet library
 #include "LinearMath/btVector3.h"
@@ -117,7 +117,7 @@ private:
    * A list of all the actuators to control. This is populated in onSetup
    * by using m_tagsToControl.
    */
-  std::vector<tgRod*> p_rigidWithTags;
+  std::vector<tgBaseRigid*> p_rigidWithTags;
 
 
   // file pointer 

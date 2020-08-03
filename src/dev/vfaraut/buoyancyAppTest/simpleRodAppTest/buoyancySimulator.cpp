@@ -46,10 +46,11 @@
 #define DEBUGOUTPUT 0
 
 // Constructor assigns variables, opens the debug file if DEBUGOUTPUT is on.
-buoyancySimulator::buoyancySimulator(float waterHeight, 
-                          std::vector<std::string> tagsToControl) :
+buoyancySimulator::buoyancySimulator(float waterHeight, float waterDensity,
+                          std::vector<std::string> tagsToControl):
   m_tagsToControl(tagsToControl),
   m_waterHeight(waterHeight),
+  m_waterDensity(waterDensity),
   m_timePassed(0.0)
 {  
   if(DEBUGOUTPUT)
@@ -57,14 +58,6 @@ buoyancySimulator::buoyancySimulator(float waterHeight,
     // opens an existing csv file or creates a new file. 
     m_fout.open("/Data.csv", std::ios::out | std::ios::app); 
   }
-
-  /* try {
-        boost::asio::io_service io_service;
-        UDPServer server{io_service};
-        io_service.run();
-    } catch (const std::exception& ex) {
-        std::cerr << ex.what() << std::endl;
-    } */
 }
 
 /**
@@ -82,7 +75,7 @@ void buoyancySimulator::initializeActuators(TensegrityModel& subject,
    * Pick out the actuators with the specified tag. 
    * They could be multiple with the same tag.
    */
-  std::vector<tgRod*> foundRigidBodies = subject.find<tgRod>(tag);
+  std::vector<tgBaseRigid*> foundRigidBodies = subject.find<tgBaseRigid>(tag);
   // Add this list of actuators to the full list. Thanks to:
   // http://stackoverflow.com/questions/201718/concatenating-two-stdvectors
   m_rodWithTags.insert( m_rodWithTags.end(), foundRigidBodies.begin(),
@@ -111,9 +104,6 @@ void buoyancySimulator::onSetup(TensegrityModel& subject)
 
 void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
 {
-  // Water density at sea level
-  const float waterDensity = 1.025;
-
   // Increment the time passed to match  current time.
   m_timePassed += dt;
   
@@ -142,7 +132,7 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
     //static double *tmpCurrMass = m_rodWithTags[i]->getMassBCU();
 
     int nb_end_points = tmpEndPointPos.absolute_pos.size();
-    tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*9.81)/double(nb_end_points);
+    tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*m_waterDensity*9.81)/double(nb_end_points);
 
     for (std::size_t j = 0; j < nb_end_points; j ++)
     {
@@ -152,10 +142,10 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
        * from the BCU is added or substracted 
        */
       m_currentWaterDepthPos1 = -(tmpEndPointPos.absolute_pos[j].getY()-m_waterHeight);
-      tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*waterDensity*98.1)/double(nb_end_points);
+      tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*m_waterDensity*98.1)/double(nb_end_points);
 
       if(m_currentWaterDepthPos1 > 0.0){
-      tmpBForce[1] = tmpBForce[0] + (m_rodWithTags[i]->mass()-tmpCurrMass[j]);
+      tmpBForce[1] = tmpBForce[0] + ((m_rodWithTags[i]->mass()/nb_end_points)-tmpCurrMass[j])*98.1;
       btVector3 force(btScalar(0.), btScalar(tmpBForce[1]), btScalar(0.)); // force is a btVector3
       m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
       m_rodWithTags[i]->getPRigidBody()->applyForce(force,tmpEndPointPos.relative_pos[j]); 
@@ -180,28 +170,5 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
         m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
       }
     }
-    /* 
-    if(DEBUG)
-    {
-      std::cout << m_tagsToControl[i] <<
-                "  Pos1 x " << tmpEndPointPos.absolute_pos[0].getX() <<
-                 " y " <<       tmpEndPointPos.absolute_pos[0].getY() <<
-                 " z " <<       tmpEndPointPos.absolute_pos[0].getZ() <<
-                 " Pos2 x " <<  tmpEndPointPos.absolute_pos[1].getX() <<
-                 " y " <<       tmpEndPointPos.absolute_pos[1].getY() <<
-                 " z " <<       tmpEndPointPos.absolute_pos[1].getZ() << "\n";
-
-
-      if(DEBUGOUTPUT)
-      {
-        m_fout << m_timePassed <<
-              "," << tmpEndPointPos.absolute_pos[0].getX() <<
-              "," << tmpEndPointPos.absolute_pos[0].getY() <<
-              "," << tmpEndPointPos.absolute_pos[0].getZ() <<
-              "," << tmpEndPointPos.absolute_pos[1].getX() <<
-              "," << tmpEndPointPos.absolute_pos[1].getY() <<
-              "," << tmpEndPointPos.absolute_pos[1].getZ() << "\n";
-      }
-    } */
   } 
 }

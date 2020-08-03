@@ -61,14 +61,6 @@ rotBCUController::rotBCUController(std::vector<std::string> tagsToControl) :
     // Insert the data to file 
     // fout << 3 << "\n";
   }
-
-  /* try {
-        boost::asio::io_service io_service;
-        UDPServer server{io_service};
-        io_service.run();
-    } catch (const std::exception& ex) {
-        std::cerr << ex.what() << std::endl;
-    } */
 }
 
 /**
@@ -81,7 +73,7 @@ void rotBCUController::initializeActuators(TensegrityModel& subject,
   //DEBUGGING
   std::cout << "Finding rigidBodies with the tag: " << tag << "\n";
   // Pick out the actuators with the specified tag
-  std::vector<tgRod*> p_foundRigidBodies = subject.find<tgRod>(tag);
+  std::vector<tgBaseRigid*> p_foundRigidBodies = subject.find<tgBaseRigid>(tag);
   std::cout << "The following rigidBodies were found and will have forces " 
             "applied to them be controlled: "
 	        << std::endl;

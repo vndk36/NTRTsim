@@ -2,8 +2,8 @@ nodes:
   # s00: [-1, 7, -.5]
   # s01: [1, 7, -.5]
 
-  s00: [0, 2, 1]
-  s01: [0, 6, -1]
+  s00: [0, 3, 1]
+  s01: [0, 3, -1]
 
   # s10: [-1, 7, .5]
   # s11: [1, 7, .5]
@@ -18,8 +18,8 @@ builders:
   alu_rod_XZ_0:
     class: tgRodInfo
     parameters:
-      density: 1.0355
-      radius: 0.08
+      density: 1.024
+      radius: 0.8
       friction: 0.99
       roll_friction: 0.90
       restitution: 0.0

@@ -30,7 +30,7 @@
 #include "core/tgObserver.h"
 #include "core/tgTags.h"
 #include "core/tgBaseRigid.h" 
-#include "core/tgRod.h"
+#include "core/tgBaseRigid.h"
 
 //Bullet library
 #include "LinearMath/btVector3.h"

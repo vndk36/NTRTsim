@@ -113,6 +113,7 @@ TensegrityModel* createModel(char const *userModelPath){
 void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
 
   float waterHeight = 1000.0;
+  float waterDensity = 1.025;
   std::vector<std::string> tagsToControl;
 
   tagsToControl.push_back("alu_rod_XZ_0");
@@ -123,7 +124,7 @@ void createAndAttachedBuoyancySimulator(TensegrityModel* const myModel){
   tagsToControl.push_back("alu_rod_ZY_1");
 
   tgObserver<TensegrityModel>* const controller = 
-    new buoyancySimulator(waterHeight, tagsToControl);
+    new buoyancySimulator(waterHeight, waterDensity, tagsToControl);
 
   myModel->attach(controller);
 

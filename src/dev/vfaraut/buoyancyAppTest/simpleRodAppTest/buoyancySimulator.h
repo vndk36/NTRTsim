@@ -62,7 +62,8 @@ public:
    * @param[in] tagsToControl, a vector (array) of strings, which is a list of 
    * the tags of all the rods upon which to act.
    */
-  buoyancySimulator(float waterHeight, std::vector<std::string> tagsToControl);
+  buoyancySimulator(float waterHeight,float waterDensity,
+                  std::vector<std::string> tagsToControl);
 
   /**
    * Nothing to delete, destructor must be virtual
@@ -101,7 +102,7 @@ private:
    * A list of all the actuators to control. This is populated in onSetup
    * by using m_tagsToControl.
    */
-  std::vector<tgRod*> m_rodWithTags;
+  std::vector<tgBaseRigid*> m_rodWithTags;
 
 
   // time passed used for timestep on logs
@@ -109,6 +110,7 @@ private:
 
   // stores the water height to be compared to point position
   float m_waterHeight;
+  float m_waterDensity;
 
   // Current position of the end point of the rod. This is changed for each rod
   double m_currentWaterDepthPos1;
