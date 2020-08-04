@@ -12,7 +12,7 @@ subdirs(
     #apsabelhaus
     #ultra-spine
     #muscleNP
-    jbruce
+    #jbruce
     #dhustigschultz
     #eajung
     #ezhu

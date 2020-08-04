@@ -103,17 +103,23 @@ public:
     
     virtual void onVisit(const tgModelVisitor& v) const;
 
-    //double getVolume(void){return volume;};
-
-    //double getMassBCU(void){return massBCU;};
-    //void setMassBCU(double setMass){massBCU = setMass;};
+     /**
+     * Finds and returns the end points of the rod. It returns an endpoint struct 
+     * that contains relative positions from the rod center point and absolut
+     * positions from the world referneces. 
+     *
+     * @param[in] void.
+     * @return endpoint structure that has the relative and absolute positon of the
+     * end points.
+     */
+    virtual endPoints getEndPoints (void);
     
 private:
 
     /** Integrity predicate. */
     bool invariant() const;
-    //double volume;
-    //static double massBCU;
+    btVector3 m_com;
+    btVector3 m_rel = btVector3(0.0, 0.0, 0.0);
 
 };
 

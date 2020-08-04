@@ -62,14 +62,6 @@ simpleBCUController::simpleBCUController(std::vector<std::string> tagsToControl)
     // Insert the data to file 
     // fout << 3 << "\n";
   }
-
-  /* try {
-        boost::asio::io_service io_service;
-        UDPServer server{io_service};
-        io_service.run();
-    } catch (const std::exception& ex) {
-        std::cerr << ex.what() << std::endl;
-    } */
 }
 
 /**

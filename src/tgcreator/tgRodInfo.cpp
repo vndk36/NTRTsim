@@ -104,21 +104,15 @@ tgModel* tgRodInfo::createModel(tgWorld& world)
     const double radius = m_config.radius;
     const double density = m_config.density;
     const double volume =  M_PI * radius * radius * length;
+
     // change sphere volume and mass for use in the controller
     rod->setVolume(volume);
-    
-    //rod->setMassBCU(volume*density/2.0, 0);
-    //rod->setMassBCU(volume*density/2.0, 1);
-
-    rod->setMassBCUMin((volume*density-(0.01*(volume*density)))/2.0);
-    rod->setMassBCUMax((volume*density+(0.01*(volume*density)))/2.0);
+    rod->setMassBCUMin((volume*density-(0.05*(volume*density)))/2.0);
+    rod->setMassBCUMax((volume*density+(0.05*(volume*density)))/2.0);
     
     initMasses.push_back(volume*density/2.0);
     initMasses.push_back(volume*density/2.0);
-    std::cout << initMasses.size() << " test \n";
     rod->initMassBCU(initMasses);
-/*     rod->setMassBCU(volume*density/2.0, 0);
-    rod->setMassBCU(volume*density/2.0, 1); */
 
     return rod;
 }

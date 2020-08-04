@@ -96,7 +96,6 @@ tgModel* tgSphereInfo::createModel(tgWorld& world)
 
     std::vector<double> initMasses;
 
-
     // volume and mass used for buoyancy computation
     const double radius = m_config.radius;
     const double density = m_config.density;
@@ -105,10 +104,12 @@ tgModel* tgSphereInfo::createModel(tgWorld& world)
     sphere->setVolume(volume);
 
     // Set one value for mass control on the buoyancy simulator
+    
+    sphere->setMassBCUMin((volume*density-(0.05*(volume*density))));
+    sphere->setMassBCUMax((volume*density+(0.05*(volume*density))));
+
     initMasses.push_back(volume*density);
     sphere->initMassBCU(initMasses);
-    sphere->setMassBCUMin(volume*density);
-    sphere->setMassBCUMax(volume*density);
 
     return sphere;
 }

@@ -93,3 +93,25 @@ bool tgSphere::invariant() const
     (m_pRigidBody != NULL) &&
     (m_mass >= 0.0);
 }
+
+/**
+ * Finds and returns the end points of the rod. It returns an endpoint struct 
+ * that contains relative positions from the rod center point and absolut
+ * positions from the world referneces. 
+ *
+ * @param[in] void.
+ * @return endpoint structure that has the relative and absolute positon of the
+ * end points.
+ */
+tgBaseRigid::endPoints tgSphere::getEndPoints (void)
+{
+
+  m_com = btVector3(centerOfMass().x(), centerOfMass().y(), centerOfMass().z());
+  
+  m_endPointPos.absolute_pos.clear();
+  m_endPointPos.relative_pos.clear();
+  m_endPointPos.relative_pos.push_back(m_rel);
+  m_endPointPos.absolute_pos.push_back(m_com);
+
+  return m_endPointPos;
+}

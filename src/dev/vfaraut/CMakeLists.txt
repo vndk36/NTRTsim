@@ -2,6 +2,7 @@ Project(vfaraut)
 
 # Add additional dev directories here.
 subdirs(
-    buoyancyAppTest
+    #buoyancyAppTest
 	#SimpleAppTest
+    controlAppTest
 )

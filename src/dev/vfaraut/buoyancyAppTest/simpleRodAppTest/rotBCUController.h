@@ -46,9 +46,9 @@
 #define NB_CASE         4
 #define NB_CONTROLLABLE 6
 
-#define RATE            0.1
-#define START_TIME      0.0
-#define DELTA_T_CASE    20.0
+#define RATE            0.0001
+#define START_TIME      5.0
+#define DELTA_T_CASE    10.0
 
 // Forward declarations
 class TensegrityModel;
@@ -151,9 +151,9 @@ private:
 
   const int m_ctrlMatrix [NB_CASE][NB_CONTROLLABLE] = {
                                   {3, 3, 2, 1, 1, 2},   // case 0
-                                  {3, 3, 4, 4, 2, 1},   // case 1
+                                  {3, 3, 3, 3, 2, 1},   // case 1
                                   {4, 4, 1, 2, 1, 2},   // case 2
-                                  {4, 4, 3, 3, 2, 1},   // case 3
+                                  {4, 4, 4, 4, 2, 1},   // case 3
                                 };
 
 

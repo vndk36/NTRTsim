@@ -132,7 +132,7 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
     //static double *tmpCurrMass = m_rodWithTags[i]->getMassBCU();
 
     int nb_end_points = tmpEndPointPos.absolute_pos.size();
-    tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*m_waterDensity*9.81)/double(nb_end_points);
+    tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*m_waterDensity*98.1)/double(nb_end_points);
 
     for (std::size_t j = 0; j < nb_end_points; j ++)
     {
@@ -142,32 +142,42 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
        * from the BCU is added or substracted 
        */
       m_currentWaterDepthPos1 = -(tmpEndPointPos.absolute_pos[j].getY()-m_waterHeight);
-      tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*m_waterDensity*98.1)/double(nb_end_points);
+      tmpBForce[0] = ((m_rodWithTags[i]->getVolume())*m_waterDensity*GRAVITY)/double(nb_end_points);
 
-      if(m_currentWaterDepthPos1 > 0.0){
-      tmpBForce[1] = tmpBForce[0] + ((m_rodWithTags[i]->mass()/nb_end_points)-tmpCurrMass[j])*98.1;
+      if(m_currentWaterDepthPos1 > 0.0)
+      {
+      tmpBForce[1] = tmpBForce[0] + ((m_rodWithTags[i]->mass()/nb_end_points)-tmpCurrMass[j])*GRAVITY;
       btVector3 force(btScalar(0.), btScalar(tmpBForce[1]), btScalar(0.)); // force is a btVector3
-      m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (.7), btScalar (.5));
+      m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (0.97), btScalar (.97));
       m_rodWithTags[i]->getPRigidBody()->applyForce(force,tmpEndPointPos.relative_pos[j]); 
 
-      if(DEBUG)
-      {
-        for (std::size_t z = 0; z < tmpCurrMass.size(); z ++)
+        if(DEBUG)
         {
-          std::cout << "mass is " << m_rodWithTags[i]->mass() << " BCU mass is " << tmpCurrMass[z] << "\n";
+        /*  for (std::size_t z = 0; z < tmpCurrMass.size(); z ++)
+          {
+            std::cout << "mass is " << m_rodWithTags[i]->mass() << " BCU mass is " << tmpCurrMass[z] << "\n";
 
+          }
+          std::cout << "Controller step Force will be applied to " << 
+                        m_tagsToControl[i] << std::endl;
+          std::cout << m_tagsToControl[i] <<
+                  "  Pos x " << tmpEndPointPos.absolute_pos[j].getX() <<
+                  " y " <<     tmpEndPointPos.absolute_pos[j].getY() <<
+                  " z " <<     tmpEndPointPos.absolute_pos[j].getZ() << "\n"; */
+
+          
         }
-        std::cout << "Controller step Force will be applied to " << 
-                      m_tagsToControl[i] << std::endl;
-        std::cout << m_tagsToControl[i] <<
-                "  Pos x " << tmpEndPointPos.absolute_pos[j].getX() <<
-                 " y " <<     tmpEndPointPos.absolute_pos[j].getY() <<
-                 " z " <<     tmpEndPointPos.absolute_pos[j].getZ() << "\n";
-      }
       }
       else
       {
         m_rodWithTags[i]->getPRigidBody()->setDamping(btScalar (0), btScalar (0));
+
+        if(DEBUG)
+        {
+          std::cout <<  "out of water \n";
+
+          
+        }        
       }
     }
   } 

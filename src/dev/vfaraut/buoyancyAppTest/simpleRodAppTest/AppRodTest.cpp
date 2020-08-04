@@ -96,7 +96,7 @@ TensegrityModel* createModel(char const *userModelPath){
       << "was used. If you want to use a custom model, you need to specify it"
 	    << std::endl;
 
-      modelPath = "src/dev/vfaraut/Turtle_YAML/rods_XZ.yaml";
+      modelPath = "src/dev/vfaraut/yamlFiles/TurtleYAML/BCU_sphere_rod.yaml";
     }
     else
     {

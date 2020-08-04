@@ -44,6 +44,8 @@
 #include <map>
 #include <fstream>
 
+#define GRAVITY 98.1  // in dm/s^2
+
 // Forward declarations
 class TensegrityModel;
 class tgBasicActuator;

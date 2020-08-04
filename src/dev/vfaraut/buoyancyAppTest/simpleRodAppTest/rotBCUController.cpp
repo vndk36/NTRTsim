@@ -167,16 +167,16 @@ void rotBCUController::setMassForOneRigid (int rigidIdx, double dt)
 
   case 3:
     /* increase side 0 and decrease side 1 */
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] + (dt*RATE));
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] - (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] - (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] + (dt*RATE));
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
     break;
 
   case 4:
     /* increase side 1 and decrease side 0  */
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] - (dt*RATE));
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] + (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] + (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] - (dt*RATE));
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
     break;
