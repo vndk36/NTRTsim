@@ -115,6 +115,7 @@ void upDownBCUController::onStep(TensegrityModel& subject, double dt)
   //          "Case " << m_count << "\n";
 
   const double rate = 0.1;
+  std::cout << "Passed time " << m_timePassed << "\n";
 
 
   if( m_timePassed > START_TIME) {
@@ -166,7 +167,6 @@ void upDownBCUController::setMassForOneRigid (int rigidIdx, double dt)
   }
 
 
-  std::cout<< "Mass set for "<<rigidIdx<< " with the case " << tmpCase << "\n"<<
-            "Mass A = "<< m_mass[0] << "   Mass B = " << m_mass[1] << "\n";
+  std::cout<< "Mass set for "<<rigidIdx<< " with the case " << tmpCase << "\n";
 
 }

@@ -116,6 +116,8 @@ void rotBCUController::onStep(TensegrityModel& subject, double dt)
 
   const double rate = 0.1;
 
+  std::cout << "Passed time " << m_timePassed << "\n";
+
 
   if( m_timePassed > START_TIME) {
     for(int i = 0; i<NB_CONTROLLABLE; i++)
@@ -146,7 +148,9 @@ void rotBCUController::setMassForOneRigid (int rigidIdx, double dt)
   switch (tmpCase)
   {
   case 0:
-    /* Do nothing */
+    // do nothing
+    m_mass.push_back(0.0);
+    m_mass.push_back(0.0);
     break;
 
   case 1:
@@ -167,16 +171,16 @@ void rotBCUController::setMassForOneRigid (int rigidIdx, double dt)
 
   case 3:
     /* increase side 0 and decrease side 1 */
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] - (dt*RATE));
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] + (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] + (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] - (dt*RATE));
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
     break;
 
   case 4:
     /* increase side 1 and decrease side 0  */
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] + (dt*RATE));
-    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] - (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[0] - (dt*RATE));
+    m_mass.push_back(p_rigidWithTags.at(rigidIdx)->getMassBCU()[1] + (dt*RATE));
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[0], 0);
     p_rigidWithTags.at(rigidIdx)->setMassBCU(m_mass[1], 1);
     break;
@@ -185,7 +189,7 @@ void rotBCUController::setMassForOneRigid (int rigidIdx, double dt)
   }
 
 
-  //std::cout<< "Mass set for "<<rigidIdx<< " with the case " << tmpCase << "\n"<<
-  //          "Mass A = "<< m_mass[0] << "   Mass B = " << m_mass[1] << "\n";
+  std::cout<< "Mass set for "<<rigidIdx<< " with the case " << tmpCase << "\n"<<
+            "Mass A = "<< m_mass[0] << "   Mass B = " << m_mass[1] << "\n";
 
 }

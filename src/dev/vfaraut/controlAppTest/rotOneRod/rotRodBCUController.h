@@ -46,9 +46,9 @@
 #define NB_CASE         2
 #define NB_CONTROLLABLE 1
 
-#define RATE            0.00001
+#define RATE            0.0001
 #define START_TIME      5.0
-#define DELTA_T_CASE    20.0
+#define DELTA_T_CASE    100.0
 
 // Forward declarations
 class TensegrityModel;

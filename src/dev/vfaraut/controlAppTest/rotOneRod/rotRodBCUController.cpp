@@ -115,6 +115,7 @@ void rotRodBCUController::onStep(TensegrityModel& subject, double dt)
   //          "Case " << m_count << "\n";
 
   const double rate = 0.1;
+  std::cout << "Passed time " << m_timePassed << "\n";
 
 
   if( m_timePassed > START_TIME) {

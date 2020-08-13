@@ -151,7 +151,7 @@ void buoyancySimulator::onStep(TensegrityModel& subject, double dt)
       {
       tmpBForce[1] = tmpBForce[0] + ((m_rigidWithTags[i]->mass()/nb_end_points)-tmpCurrMass[j])*GRAVITY;
       btVector3 force(btScalar(0.), btScalar(tmpBForce[1]), btScalar(0.)); // force is a btVector3
-      m_rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.85), btScalar (.85));
+      m_rigidWithTags[i]->getPRigidBody()->setDamping(btScalar (.8457), btScalar (.8457));
       m_rigidWithTags[i]->getPRigidBody()->applyForce(force,tmpEndPointPos.relative_pos[j]); 
 
         if(DEBUG)
